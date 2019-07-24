@@ -1,4 +1,5 @@
 import GoogleMapsMounter from '@components/GoogleMapsMounter';
+import MarkerArray from '@components/googleMapsMounter/MarkerArray';
 import GoogleScriptMounter from '@components/GoogleScriptMounter';
 import MapControll from '@components/MapControll';
 import Marker from '@components/Marker';
@@ -37,8 +38,17 @@ const MapInitializer = () => {
                     mapWrapper={mapWrapper}
                     center={{ lat: CZECH_REPUBLIC_LAT, lng: CZECH_REPUBLIC_LONG }}
                 >
-                    <OptimizedMarkerClusterer clusteringSettings={{ ignoreHidden: true }}>
-                        <MarkerDeployer display={displayMarkers} />
+                    <OptimizedMarkerClusterer
+                        clusteringSettings={{
+                            ignoreHidden: true,
+                            averageCenter: true,
+                            enableRetinaIcons: false,
+                            batchSize: 200,
+                        }}
+                    >
+                        <MarkerArray displayOnlyInFov={false}>
+                            <MarkerDeployer display={displayMarkers} />
+                        </MarkerArray>
                     </OptimizedMarkerClusterer>
                     <MapControll
                         position={google.maps.ControlPosition.LEFT_CENTER}

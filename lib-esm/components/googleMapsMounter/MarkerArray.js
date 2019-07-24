@@ -17,7 +17,7 @@ import * as React from 'react';
 var useState = React.useState, useContext = React.useContext;
 var DEFAULT_MARKER_ARRAY_PROPS = {
     batchSize: 50,
-    displayOnlyInFov: true,
+    displayOnlyInFov: false,
 };
 var addMarker = function (_a, map, clusterer) {
     var mountedMarkers = _a[0], setMountedMarkers = _a[1];
@@ -28,7 +28,7 @@ var addMarker = function (_a, map, clusterer) {
         }
         var newMarker = new google.maps.Marker(markerProps);
         if (clusterer) {
-            clusterer.addMarker(newMarker);
+            clusterer.addMarker(newMarker, true);
         }
         else {
             newMarker.setMap(map);
@@ -72,7 +72,9 @@ var MarkerArray = function (props) {
     }
     displayOnlyInFov &&
         useHideOutOfFovMarkers(mountedMarkers, map, function () {
-            clustererContext.clusterer && clustererContext.clusterer.repaint();
+            if (clustererContext.clusterer && mountedMarkers) {
+                clustererContext.clusterer.repaint();
+            }
             props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
         });
     props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);

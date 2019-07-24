@@ -16,7 +16,7 @@ interface MarkerArrayProps {
 
 const DEFAULT_MARKER_ARRAY_PROPS: MarkerArrayProps = {
     batchSize: 50,
-    displayOnlyInFov: true,
+    displayOnlyInFov: false,
 };
 
 type MarkerEventNames = google.maps.MarkerMouseEventNames;
@@ -38,7 +38,7 @@ const addMarker = (
     }
     const newMarker = new google.maps.Marker(markerProps);
     if (clusterer) {
-        clusterer.addMarker(newMarker);
+        clusterer.addMarker(newMarker, true);
     } else {
         newMarker.setMap(map);
     }
@@ -84,7 +84,9 @@ const MarkerArray = (props: MarkerArrayProps = DEFAULT_MARKER_ARRAY_PROPS) => {
     }
     displayOnlyInFov &&
         useHideOutOfFovMarkers(mountedMarkers, map, () => {
-            clustererContext.clusterer && clustererContext.clusterer.repaint();
+            if (clustererContext.clusterer && mountedMarkers) {
+                clustererContext.clusterer.repaint();
+            }
             props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
         });
     props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);

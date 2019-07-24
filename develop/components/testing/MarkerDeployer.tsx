@@ -4,6 +4,7 @@ import * as React from 'react';
 const { useState } = React;
 import Marker from '@components/Marker';
 import MapMounterContext from '@context/MapMounterContext';
+import { MarkerProps } from 'lib';
 import * as MarkerIconSelected from './img/marker-black.svg';
 import * as MarkerIcon from './img/marker-yellow.svg';
 
@@ -23,7 +24,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
     ] = useState(null);
     const [mapMounterContext, setMapMounterContex] = React.useContext(MapMounterContext);
     const [displayMarkers, setDisplayMarkers] = useState(true);
-    const numOfLocations = 1000;
+    const numOfLocations = 5000;
     if (!locations) {
         setLocations(getRandomLocations(numOfLocations));
     }
@@ -43,15 +44,19 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
 
     const props =
         locations &&
-        locations.map((location, index) => ({
-            onClick: setSelected(index),
-            key: index,
-            id: index,
-            icon: index === selectedId ? MarkerIconSelected : MarkerIcon,
-            position: location,
-            visible: true,
-            optimizations: { listenersChanged: false },
-        }));
+        locations.map(
+            (location, index): MarkerProps => ({
+                onClick: setSelected(index),
+                key: index,
+                id: index,
+                icon: index === selectedId ? MarkerIconSelected : MarkerIcon,
+                position: location,
+                visible: true,
+                optimizations: { listenersChanged: false },
+                optimized: true,
+                draggable: false,
+            }),
+        );
 
     const uncachedMarkers =
         props &&
@@ -90,7 +95,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
         if (mapMounterContext.map) {
             const listener = mapMounterContext.map.addListener('idle', () => {
                 if (mapMounterContext.map.getZoom() === breakingPoint) {
-                    toggleDisplayMarkers();
+                    // toggleDisplayMarkers();
                 }
             });
             return () => listener.remove();
