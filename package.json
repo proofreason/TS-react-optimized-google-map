@@ -1,5 +1,5 @@
 {
-  "name": "@zatloeri/react-optimized-google-map",
+  "name": "react-optimized-google-map",
   "version": "1.0.0",
   "description": "google maps wrapper optimized for react applications",
   "main": "index.js",
