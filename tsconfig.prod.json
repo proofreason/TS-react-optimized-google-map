@@ -42,7 +42,8 @@
         "develop",
         "dist",
         "lib",
-        "lib-esm"
+        "lib-esm",
+        "index.d.ts"
     ],
     "types": [
         "src/typings",
