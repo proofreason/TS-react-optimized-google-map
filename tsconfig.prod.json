@@ -1,0 +1,51 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "jsx": "react",
+        "sourceMap": true,
+        "target": "es5",
+        "baseUrl": ".",
+        "declaration": true,
+        "lib": ["es5", "es6", "dom", "esnext.asynciterable"],
+        "outDir": "lib",
+        "paths": {
+            "@components/*": [
+                "src/components/*"
+            ],
+            "@context/*": [
+                "src/context/*"
+            ],
+            "@lib/*": [
+                "src/lib/*"
+            ],
+            "@typings/*": [
+                "src/typings/*"
+            ],
+            "@develop_components/*": [
+                "develop/components/*"
+            ],
+            "@develop_lib/*": [
+                "develop/lib/*"
+            ],
+        },
+        "plugins": [
+            {
+              "transform": "@zerollup/ts-transform-paths",
+              "exclude": ["*"]
+            }
+          ],
+    },
+    "exclude": [
+        "node_modules",
+        "develop",
+        "dist",
+        "lib",
+        "lib-esm"
+    ],
+    "types": [
+        "src/typings",
+        "markerclustererplus"
+    ]
+}

@@ -1,0 +1,78 @@
+{
+  "name": "@zatloeri/react-optimized-google-map",
+  "version": "1.0.0",
+  "description": "google maps wrapper optimized for react applications",
+  "main": "index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "dev": "webpack-dev-server --open --config webpack/webpack.dev.js",
+    "prod": "webpack --open --config webpack/webpack.prod.js",
+    "clean": "rm -rf ./lib & rm -rf ./lib-esm & rm -rf ./dist",
+    "build": "npm run clean & ttsc -p ./tsconfig.prod.json & ttsc -p ./tsconfig.prod.json -m es6 --outDir lib-esm",
+    "build-all": "npm run build & npm run prod",
+    "update:packages": "node wipe-dependencies.js && rm -rf node_modules && npm update --save-dev && npm update --save",
+    "tslint-fix": "tslint --fix -c ./tslint.json '{src,develop}/**/*{.ts,.tsx}'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.proofreason.com:e.on/eon-drupal.git"
+  },
+  "lint-staged": {
+    "{src,develop}/**/*.{ts,tsx}": [
+      "tslint -c ./tslint.json"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "author": "Erik Zatloukal <zatloukal.erik@gmail.com>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@zerollup/ts-transform-paths": "^1.7.3",
+    "awesome-typescript-loader": "^5.2.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "file-loader": "^4.0.0",
+    "filemanager-webpack-plugin": "^2.0.5",
+    "google-maps-infobox": "^2.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "husky": "^3.0.0",
+    "lint-staged": "^9.1.0",
+    "marker-clusterer-plus": "^2.1.4",
+    "markerclustererplus": "^2.1.4",
+    "path": "^0.12.7",
+    "prettier": "^1.18.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "require-dir": "^1.2.0",
+    "speed-measure-webpack-plugin": "^1.3.1",
+    "terser-webpack-plugin": "^1.3.0",
+    "ts-overlapping-marker-spiderfier": "^1.0.3",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-loader": "^3.5.4",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^4.0.0",
+    "ttypescript": "^1.5.7",
+    "typescript": "^3.5.3",
+    "utility-types": "^3.7.0",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {
+    "@types/googlemaps": "^3.36.6",
+    "@types/markerclustererplus": "^2.1.33",
+    "@types/node": "^12.6.1",
+    "@types/react": "^16.8.23",
+    "@types/react-dom": "^16.8.4",
+    "dotenv-webpack": "^1.7.0"
+  },
+  "keywords": [
+    "react",
+    "google",
+    "maps"
+  ]
+}
