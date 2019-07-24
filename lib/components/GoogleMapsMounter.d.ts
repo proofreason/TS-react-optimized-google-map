@@ -2,8 +2,9 @@
 import * as React from 'react';
 interface GoogleMapsMounterProps extends google.maps.MapOptions {
     children?: React.ReactNode;
-    mapWrapper?: JSX.Element;
+    mapElement?: JSX.Element;
     withMounter?: boolean;
+    mapWrapperStyle?: React.CSSProperties;
     getMountedMarkers?: (markers: google.maps.Marker[]) => void;
 }
 declare const GoogleMapsMounter: React.MemoExoticComponent<(props?: GoogleMapsMounterProps) => JSX.Element>;
