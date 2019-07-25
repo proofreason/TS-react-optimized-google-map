@@ -6,19 +6,20 @@ const { useEffect, useState } = React;
 
 interface GoogleMapsMounterProps extends google.maps.MapOptions {
     children?: React.ReactNode;
-    mapWrapper?: JSX.Element;
+    mapElement?: JSX.Element;
     withMounter?: boolean;
+    mapWrapperStyle?: React.CSSProperties;
     getMountedMarkers?: (markers: google.maps.Marker[]) => void;
 }
 
 interface MapInitSettings extends google.maps.MapOptions {
-    mapWrapperId: string;
+    mapElementId: string;
 }
 
-const DEFAULT_WRAPPER_ID = 'google-maps-wrapper';
+const DEFAULT_ELEMENT_ID = 'google-maps-element';
 
 const DEFAULT_PROPS: GoogleMapsMounterProps = {
-    mapWrapper: <div id={DEFAULT_WRAPPER_ID} style={{ width: '100%', height: '100%' }} />,
+    mapElement: <div id={DEFAULT_ELEMENT_ID} style={{ width: '100%', height: '100%' }} />,
     withMounter: true,
     zoom: 7,
 };
@@ -30,12 +31,12 @@ const useGoogleMap = (mapSettings: MapInitSettings): google.maps.Map => {
         return null;
     }
     useEffect(() => {
-        const wrapperElement = document.getElementById(mapSettings.mapWrapperId);
-        if (wrapperElement) {
-            setMap(new google.maps.Map(wrapperElement, mapSettings));
+        const mapElement = document.getElementById(mapSettings.mapElementId);
+        if (mapElement) {
+            setMap(new google.maps.Map(mapElement, mapSettings));
         } else {
             console.error(
-                'Map wrapper was not found. Make sure you provided unique id for the element',
+                'Map element was not found. Make sure you provided unique id for the element',
             );
         }
     }, []);
@@ -44,18 +45,18 @@ const useGoogleMap = (mapSettings: MapInitSettings): google.maps.Map => {
 
 const GoogleMapsMounter = React.memo((props: GoogleMapsMounterProps = DEFAULT_PROPS) => {
     const currentProps = { ...DEFAULT_PROPS, ...props };
-    const { children, mapWrapper, getMountedMarkers } = currentProps;
+    const { children, mapElement, getMountedMarkers, mapWrapperStyle } = currentProps;
     const context = React.useState({ map: null });
     const [contextState, setContext] = context;
     const map: google.maps.Map = useGoogleMap({
         ...currentProps,
-        mapWrapperId: mapWrapper.props.id,
+        mapElementId: mapElement.props.id,
     });
     map && !contextState.map && setContext({ map });
     return (
         <MapMounterContext.Provider value={context}>
-            <div className={'react-map-content-wrapper'}>
-                {mapWrapper}
+            <div className={'react-map-content-wrapper'} style={mapWrapperStyle}>
+                {mapElement}
                 {contextState.map &&
                     (props.withMounter ? (
                         <MarkerArray onMountedMarkersChange={getMountedMarkers} key={0}>
