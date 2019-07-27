@@ -60,7 +60,7 @@ const MapControll = (props: MapControllProps = defaultProps) => {
     }, []);
 
     React.useEffect(() => {
-        if ((controlDiv && divIndex !== null) || undefined) {
+        if (controlDiv && divIndex !== (null || undefined)) {
             map.controls[props.position].push(controlDiv);
             updateStyles();
             setControllLoaded(true);
@@ -68,7 +68,7 @@ const MapControll = (props: MapControllProps = defaultProps) => {
     }, [controlDiv, divIndex]);
 
     React.useEffect(() => {
-        if ((controlDiv && divIndex !== null) || undefined) {
+        if (controlDiv && (divIndex !== null || undefined)) {
             updateStyles();
         }
     }, [offsets, containerStyle]);

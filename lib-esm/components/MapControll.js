@@ -45,14 +45,14 @@ var MapControll = function (props) {
         };
     }, []);
     React.useEffect(function () {
-        if ((controlDiv && divIndex !== null) || undefined) {
+        if (controlDiv && divIndex !== (null || undefined)) {
             map.controls[props.position].push(controlDiv);
             updateStyles();
             setControllLoaded(true);
         }
     }, [controlDiv, divIndex]);
     React.useEffect(function () {
-        if ((controlDiv && divIndex !== null) || undefined) {
+        if (controlDiv && (divIndex !== null || undefined)) {
             updateStyles();
         }
     }, [offsets, containerStyle]);
