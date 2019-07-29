@@ -49,12 +49,13 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
                 onClick: setSelected(index),
                 key: index,
                 id: index,
-                icon: index === selectedId ? MarkerIconSelected : MarkerIcon,
-                position: location,
-                visible: true,
                 optimizations: { listenersChanged: false },
-                optimized: true,
-                draggable: false,
+                markerOptions: {
+                    draggable: false,
+                    optimized: true,
+                    visible: true,
+                    icon: index === selectedId ? MarkerIconSelected : MarkerIcon,
+                },
             }),
         );
 
