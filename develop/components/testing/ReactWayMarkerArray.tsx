@@ -1,13 +1,13 @@
 import GoogleMapsMounter from '@components/GoogleMapsMounter';
 import MarkerArray from '@components/googleMapsMounter/MarkerArray';
 import GoogleScriptMounter from '@components/GoogleScriptMounter';
+import InfoBox from '@components/InfoBox';
 import MapControll from '@components/MapControll';
 import Marker from '@components/Marker';
 import OptimizedMarkerClusterer from '@components/MarkerClusterer';
 import MapMounterContext from '@context/MapMounterContext';
 import { CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG } from '@develop_lib/constants';
 import * as React from 'react';
-import InfoBox from '@components/InfoBox';
 import MarkerDeployer from './MarkerDeployer';
 const { useState } = React;
 
@@ -46,7 +46,7 @@ const MapInitializer = () => {
                             enableRetinaIcons: false,
                         }}
                     >
-                        <MarkerArray displayOnlyInFov={false}></MarkerArray>
+                        <MarkerDeployer display={displayMarkers} />
                     </OptimizedMarkerClusterer>
                     <InfoBox
                         closeBoxURL=""

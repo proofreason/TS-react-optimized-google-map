@@ -102,7 +102,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
             return () => listener.remove();
         }
     }, [mapMounterContext.map, displayMarkers]);
-    return <>{displayMarkers && markerCache}</>;
+    return <>{displayMarkers && display && markerCache}</>;
 };
 
 export default MarkerDeployer;
