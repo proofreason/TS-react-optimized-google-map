@@ -12,7 +12,6 @@ import {
     objectMounterReady,
 } from '@context/ObjectMounterContext';
 import * as React from 'react';
-import InfoBox from './InfoBox';
 
 const { useContext, useEffect } = React;
 

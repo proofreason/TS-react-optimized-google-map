@@ -13,7 +13,7 @@ interface InfoBoxProps extends InfoBoxOptions {
 const openWindowOnPosition = (
     infoBox: InfoBoxObject,
     map: google.maps.Map,
-    position?: google.maps.LatLng,
+    position: google.maps.LatLng,
 ) => {
     infoBox.open(map, null);
     infoBox.setPosition(position);
