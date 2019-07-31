@@ -2,10 +2,6 @@ import AsyncMarkerArrayContext, {
     useAddToAsyncMounter,
     asyncMounterReady,
 } from '@context/AsyncMounterContext';
-import MapMounterContext, {
-    MapMounterContextType,
-    MapMounterContextProps,
-} from '@context/MapMounterContext';
 import {
     useAddToObjectMounter,
     MarkerArrayContext,
@@ -44,7 +40,6 @@ const noMounterFound = () => {
 };
 
 const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
-    const [mapContext] = useContext(MapMounterContext);
     const [asyncMarkerArrayContext] = useContext(AsyncMarkerArrayContext);
     const [markerArrayContext] = useContext(MarkerArrayContext);
 
@@ -105,11 +100,6 @@ const useUpdateOnPropsChange = (
 };
 
 const Marker = (props: MarkerProps) => {
-    const { position } = props.markerOptions;
-    const boxPosition =
-        position instanceof google.maps.LatLng
-            ? position
-            : new google.maps.LatLng(position.lat, position.lng);
     return (
         <MarkerInner {...props} key={props.id}>
             {props.children}
