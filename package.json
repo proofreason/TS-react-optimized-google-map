@@ -31,7 +31,6 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "@zerollup/ts-transform-paths": "^1.7.3",
-    "google-maps-infobox": "^2.0.0",
     "awesome-typescript-loader": "^5.2.1",
     "clean-webpack-plugin": "^3.0.0",
     "file-loader": "^4.0.0",
@@ -39,8 +38,6 @@
     "html-webpack-plugin": "^3.2.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.1.0",
-    "marker-clusterer-plus": "^2.1.4",
-    "markerclustererplus": "^2.1.4",
     "path": "^0.12.7",
     "prettier": "^1.18.2",
     "require-dir": "^1.2.0",
@@ -64,11 +61,13 @@
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "marker-clusterer-plus": "^2.1.4",
     "@types/googlemaps": "^3.36.6",
     "@types/markerclustererplus": "^2.1.33",
     "@types/node": "^12.6.1",
     "@types/react": "^16.8.23",
-    "@types/react-dom": "^16.8.4"
+    "@types/react-dom": "^16.8.4",
+    "google-maps-infobox": "^2.0.0"
   },
   "keywords": [
     "react",

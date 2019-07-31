@@ -1,13 +1,8 @@
-import MapMounterContext, {
-    MapMounterContextType,
-    MapMounterContextProps,
-} from '@context/MapMounterContext';
+import MapMounterContext from '@context/MapMounterContext';
 import {
     MarkerClustererContext,
     MarkerClustererContextType,
-    MarkerClustererContextProps,
 } from '@context/MarkerClustererContext';
-import { forceRefreshMap } from '@lib/MapUtils';
 import * as MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
 import * as React from 'react';
 import MarkerArray from './googleMapsMounter/MarkerArray';
