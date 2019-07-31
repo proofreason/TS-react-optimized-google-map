@@ -12,7 +12,6 @@ import {
     objectMounterReady,
 } from '@context/ObjectMounterContext';
 import * as React from 'react';
-import InfoBox from './InfoBox';
 
 const { useContext, useEffect } = React;
 
@@ -22,7 +21,7 @@ interface Optimizations {
     listenersChanged?: boolean;
 }
 
-interface MarkerProps extends google.maps.MarkerOptions {
+interface MarkerProps {
     [index: string]: any;
     children?: React.ReactNode;
     id: number;
@@ -30,6 +29,7 @@ interface MarkerProps extends google.maps.MarkerOptions {
     onClick?: MarkerListenerFunction;
     onMouseEnter?: MarkerListenerFunction;
     onMouseOut?: MarkerListenerFunction;
+    markerOptions: google.maps.MarkerOptions;
 }
 
 const noMounterFound = () => {
@@ -89,17 +89,19 @@ const useAddListenersToMarker = (
     }, toWatch);
 };
 
-const useUpdateOnPropsChange = (props: MarkerProps, marker: google.maps.Marker) => {
-    const { onClick, onMouseEnter, onMouseOut, optimizations, ...markerProps } = props;
+const useUpdateOnPropsChange = (
+    markerOptions: google.maps.MarkerOptions,
+    marker: google.maps.Marker,
+) => {
     useEffect(() => {
         if (marker) {
-            marker.setOptions(markerProps);
+            marker.setOptions(markerOptions);
         }
-    }, [markerProps, marker]);
+    }, [markerOptions, marker]);
 };
 
 const Marker = (props: MarkerProps) => {
-    const { position } = props;
+    const { position } = props.markerOptions;
     const boxPosition =
         position instanceof google.maps.LatLng
             ? position
@@ -124,7 +126,7 @@ const MarkerInner = (props: MarkerProps) => {
         ],
         props.optimizations && props.optimizations.listenersChanged,
     );
-    useUpdateOnPropsChange(props, addedMarker);
+    useUpdateOnPropsChange(props.markerOptions, addedMarker);
     return <>{props.children}</>;
 };
 

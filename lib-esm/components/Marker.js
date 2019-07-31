@@ -9,17 +9,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 import AsyncMarkerArrayContext, { useAddToAsyncMounter, } from "../context/AsyncMounterContext";
 import MapMounterContext from "../context/MapMounterContext";
 import { useAddToObjectMounter, MarkerArrayContext, objectMounterReady, } from "../context/ObjectMounterContext";
@@ -67,16 +56,15 @@ var useAddListenersToMarker = function (marker, listeners, changFlagged) {
         };
     }, toWatch);
 };
-var useUpdateOnPropsChange = function (props, marker) {
-    var onClick = props.onClick, onMouseEnter = props.onMouseEnter, onMouseOut = props.onMouseOut, optimizations = props.optimizations, markerProps = __rest(props, ["onClick", "onMouseEnter", "onMouseOut", "optimizations"]);
+var useUpdateOnPropsChange = function (markerOptions, marker) {
     useEffect(function () {
         if (marker) {
-            marker.setOptions(markerProps);
+            marker.setOptions(markerOptions);
         }
-    }, [markerProps, marker]);
+    }, [markerOptions, marker]);
 };
 var Marker = function (props) {
-    var position = props.position;
+    var position = props.markerOptions.position;
     var boxPosition = position instanceof google.maps.LatLng
         ? position
         : new google.maps.LatLng(position.lat, position.lng);
@@ -91,7 +79,7 @@ var MarkerInner = function (props) {
         { eventName: 'mouseover', listener: props.onMouseEnter },
         { eventName: 'mouseout', listener: props.onMouseOut },
     ], props.optimizations && props.optimizations.listenersChanged);
-    useUpdateOnPropsChange(props, addedMarker);
+    useUpdateOnPropsChange(props.markerOptions, addedMarker);
     return React.createElement(React.Fragment, null, props.children);
 };
 export default Marker;

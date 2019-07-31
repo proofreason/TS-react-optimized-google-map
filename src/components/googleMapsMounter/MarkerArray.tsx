@@ -36,7 +36,7 @@ const addMarker = (
         );
         return null;
     }
-    const newMarker = new google.maps.Marker(markerProps);
+    const newMarker = new google.maps.Marker(markerProps.markerOptions);
     if (clusterer) {
         clusterer.addMarker(newMarker, true);
     } else {
