@@ -29,7 +29,6 @@ const MapInitializer = () => {
     const toggleDisplayMarkers = () => {
         displayMarkers ? setDisplayMarkers(false) : setDisplayMarkers(true);
     };
-
     return (
         <GoogleScriptMounter key={0} scriptUrl={GOOGLE_API_URL} onScriptLoad={setScriptIsLoaded}>
             <div>Script is {isScriptLoaded ? 'loaded' : 'not loaded'}</div>
@@ -41,9 +40,7 @@ const MapInitializer = () => {
                 >
                     <OptimizedMarkerClusterer
                         clusteringSettings={{
-                            ignoreHidden: true,
-                            averageCenter: true,
-                            enableRetinaIcons: false,
+                            batchSize: 5000,
                         }}
                     >
                         <MarkerDeployer display={displayMarkers} />
