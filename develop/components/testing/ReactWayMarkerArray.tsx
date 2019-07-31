@@ -7,6 +7,7 @@ import OptimizedMarkerClusterer from '@components/MarkerClusterer';
 import MapMounterContext from '@context/MapMounterContext';
 import { CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG } from '@develop_lib/constants';
 import * as React from 'react';
+import InfoBox from '@components/InfoBox';
 import MarkerDeployer from './MarkerDeployer';
 const { useState } = React;
 
@@ -35,7 +36,7 @@ const MapInitializer = () => {
             {isScriptLoaded && (
                 <GoogleMapsMounter
                     key={0}
-                    mapWrapper={mapWrapper}
+                    mapElement={mapWrapper}
                     center={{ lat: CZECH_REPUBLIC_LAT, lng: CZECH_REPUBLIC_LONG }}
                 >
                     <OptimizedMarkerClusterer
@@ -43,13 +44,19 @@ const MapInitializer = () => {
                             ignoreHidden: true,
                             averageCenter: true,
                             enableRetinaIcons: false,
-                            batchSize: 200,
                         }}
                     >
-                        <MarkerArray displayOnlyInFov={false}>
-                            <MarkerDeployer display={displayMarkers} />
-                        </MarkerArray>
+                        <MarkerArray displayOnlyInFov={false}></MarkerArray>
                     </OptimizedMarkerClusterer>
+                    <InfoBox
+                        closeBoxURL=""
+                        boxStyle={{ color: 'blue' }}
+                        boxClass={'my awesome class'}
+                        open={true}
+                        position={new google.maps.LatLng(CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG)}
+                    >
+                        <div style={{ backgroundColor: 'red' }}>My awesome label</div>
+                    </InfoBox>
                     <MapControll
                         position={google.maps.ControlPosition.LEFT_CENTER}
                         offsets={{ topOffset: 25 }}
