@@ -1,5 +1,5 @@
 import GoogleMapsMounter from '@components/GoogleMapsMounter';
-import MarkerArray from '@components/googleMapsMounter/MarkerArray';
+import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
 import GoogleScriptMounter from '@components/GoogleScriptMounter';
 import InfoBox from '@components/InfoBox';
 import MapControll from '@components/MapControll';
@@ -40,7 +40,8 @@ const MapInitializer = () => {
                 >
                     <OptimizedMarkerClusterer
                         clusteringSettings={{
-                            batchSize: 5000,
+                            ignoreHidden: true,
+                            batchSize: 30000,
                         }}
                     >
                         <MarkerDeployer display={displayMarkers} />

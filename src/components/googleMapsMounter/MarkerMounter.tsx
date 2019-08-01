@@ -2,7 +2,7 @@ import { MarkerProps, useAddListenersToMarker } from '@components/Marker';
 import AsyncMarkerArrayContext, { AsyncMarkerArrayContextType } from '@context/AsyncMounterContext';
 import MapMounterContext from '@context/MapMounterContext';
 import { MarkerClustererContext } from '@context/MarkerClustererContext';
-import { MarkerArrayContext, MarkerArrayContextType } from '@context/ObjectMounterContext';
+import { MarkerMounterContext, MarkerMounterContextType } from '@context/ObjectMounterContext';
 import { useHideOutOfFovMarkers } from '@lib/Optimization';
 import * as React from 'react';
 const { useState, useContext } = React;
@@ -33,13 +33,17 @@ const addMarker = (
     map: google.maps.Map,
     clusterer: MarkerClusterer,
 ) => (markerProps: MarkerProps, id: number) => {
-    if (mountedMarkers[id]) {
+    if (mountedMarkers[id] && !mountedMarkers[id].isToBeRemoved) {
         console.warn(
             `tried to add marker with id ${id}
             to MarkerArray. Marker with this id already exists,
             if you want to replace it, remove it first.`,
         );
         return null;
+    }
+    if (mountedMarkers[id]) {
+        clusterer && clusterer.removeMarker(mountedMarkers[id], true);
+        mountedMarkers[id].setMap(null);
     }
     const newMarker = new google.maps.Marker(markerProps.markerOptions) as MarkerTypeOverwrite;
     newMarker.isToBeRemoved = false;
@@ -59,10 +63,8 @@ const removeMarker = (
         );
         return false;
     }
-    if (mountedMarkers[id]) {
-        mountedMarkers[id].isToBeRemoved = true;
-        return true;
-    }
+    mountedMarkers[id].isToBeRemoved = true;
+    return true;
 };
 
 const removeMarkersMarkedToBeRemoved = (
@@ -72,7 +74,7 @@ const removeMarkersMarkedToBeRemoved = (
 ) => {
     const markersToRemove = markers.filter((marker) => marker.isToBeRemoved);
     if (clusterer) {
-        clusterer.removeMarkers(markersToRemove, true);
+        clusterer.removeMarkers(markersToRemove, false);
     }
     markersToRemove.map((markerToRemove) => {
         markerToRemove.setMap(null);
@@ -99,7 +101,7 @@ const addMarkersToMap = (
     }
 };
 
-const MarkerArray = (props: MarkerArrayProps = DEFAULT_MARKER_ARRAY_PROPS) => {
+const MarkerMounter = (props: MarkerArrayProps = DEFAULT_MARKER_ARRAY_PROPS) => {
     const currentProps = { ...DEFAULT_MARKER_ARRAY_PROPS, ...props };
     const { children, displayOnlyInFov } = currentProps;
     const [mapContext, setMapContext] = useContext(MapMounterContext);
@@ -119,17 +121,20 @@ const MarkerArray = (props: MarkerArrayProps = DEFAULT_MARKER_ARRAY_PROPS) => {
             }
             props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
         });
-    props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
-    const context: MarkerArrayContextType = useState({
+    const context: MarkerMounterContextType = useState({
         map: mapContext.map,
         addObject: addMarker(mountedMarkersState, mapContext.map, clustererContext.clusterer),
         removeObject: removeMarker(mountedMarkersState, clustererContext.clusterer),
     });
     const [constextState, setContextState] = context;
     React.useEffect(() => {
+        if (!mountedMarkers) {
+            return;
+        }
         const { clusterer } = clustererContext;
         removeMarkersMarkedToBeRemoved(mountedMarkers, clusterer, map);
         addMarkersToMap(mountedMarkers, clusterer, map);
+        clusterer.repaint();
         setMountedMarkers([...mountedMarkers]);
     }, [children]);
 
@@ -140,7 +145,10 @@ const MarkerArray = (props: MarkerArrayProps = DEFAULT_MARKER_ARRAY_PROPS) => {
             removeObject: removeMarker(mountedMarkersState, clustererContext.clusterer),
         });
     }, [mountedMarkers]);
-    return <MarkerArrayContext.Provider value={context}>{children}</MarkerArrayContext.Provider>;
+    props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
+    return (
+        <MarkerMounterContext.Provider value={context}>{children}</MarkerMounterContext.Provider>
+    );
 };
 
-export default MarkerArray;
+export default MarkerMounter;

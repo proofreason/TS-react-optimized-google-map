@@ -4,14 +4,14 @@ import AsyncMarkerArrayContext, {
 } from '@context/AsyncMounterContext';
 import {
     useAddToObjectMounter,
-    MarkerArrayContext,
+    MarkerMounterContext,
     objectMounterReady,
 } from '@context/ObjectMounterContext';
+import { addListenersToMarker } from '@lib/MapUtils';
+import { MarkerListenerFunction, MarkerListener } from '../types/mapTypes';
 import * as React from 'react';
 
 const { useContext, useEffect } = React;
-
-type MarkerListenerFunction = (marker: google.maps.Marker, event: MouseEvent) => void;
 
 interface Optimizations {
     listenersChanged?: boolean;
@@ -41,12 +41,7 @@ const noMounterFound = () => {
 
 const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
     const [asyncMarkerArrayContext] = useContext(AsyncMarkerArrayContext);
-    const [markerArrayContext] = useContext(MarkerArrayContext);
-
-    // async loading has preccedence
-    if (objectMounterReady(asyncMarkerArrayContext)) {
-        return useAddToAsyncMounter(asyncMarkerArrayContext, props);
-    }
+    const [markerArrayContext] = useContext(MarkerMounterContext);
 
     if (objectMounterReady(markerArrayContext)) {
         return useAddToObjectMounter(markerArrayContext, props);
@@ -54,11 +49,6 @@ const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
 
     noMounterFound();
 };
-
-interface MarkerListener {
-    eventName: google.maps.MarkerMouseEventNames;
-    listener: MarkerListenerFunction;
-}
 
 const useAddListenersToMarker = (
     marker: google.maps.Marker,
@@ -70,15 +60,7 @@ const useAddListenersToMarker = (
     const toWatch = changFlagged === null ? [markerValid, listeners] : [markerValid, changFlagged];
     useEffect(() => {
         if (markerValid) {
-            listeners.map(({ eventName, listener }) => {
-                if (!listener) {
-                    return null;
-                }
-                const enhancedListener = (event: MouseEvent) => listener(marker, event);
-                // tslint:disable-next-line
-                const addedListener = marker.addListener(eventName, enhancedListener);
-                activeListeners.push(addedListener);
-            });
+            activeListeners.concat(addListenersToMarker(listeners, marker));
         }
         return () => {
             activeListeners.map((listener) => {

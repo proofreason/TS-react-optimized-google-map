@@ -2,7 +2,9 @@ import { LatLngPosition, getRandomLocations } from '@develop_lib/markerUtils';
 import { useMarkerCache, updateMarkerCache } from '@lib/Optimization';
 import * as React from 'react';
 const { useState } = React;
+import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
 import Marker, { MarkerProps } from '@components/Marker';
+import MarkerBatch from '@components/MarkerBatch';
 import MapMounterContext from '@context/MapMounterContext';
 import * as MarkerIconSelected from './img/marker-black.svg';
 import * as MarkerIcon from './img/marker-yellow.svg';
@@ -50,6 +52,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
                 id: index,
                 optimizations: { listenersChanged: false },
                 markerOptions: {
+                    position: location,
                     draggable: false,
                     optimized: true,
                     visible: true,
@@ -91,11 +94,13 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
     }
 
     React.useEffect(() => {
-        if (markerCache) {
+        if (markerCache && false) {
             props.map((prop) => {
                 updateMarkerCache([markerCache, setMarkerCache], prop.id, {
                     ...prop,
-                    visible: display && displayMarkers,
+                    markerOptions: {
+                        visible: display && displayMarkers,
+                    },
                 });
             });
         }
@@ -116,7 +121,11 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
             return () => listener.remove();
         }
     }, [mapMounterContext.map, displayMarkers]);
-    return <>{markerCache}</>;
+    return (
+        <MarkerMounter>
+            <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>
+        </MarkerMounter>
+    );
 };
 
 export default MarkerDeployer;

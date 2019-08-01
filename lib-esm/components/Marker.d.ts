@@ -1,6 +1,6 @@
 /// <reference types="googlemaps" />
+import { MarkerListenerFunction, MarkerListener } from '../types/mapTypes';
 import * as React from 'react';
-declare type MarkerListenerFunction = (marker: google.maps.Marker, event: MouseEvent) => void;
 interface Optimizations {
     listenersChanged?: boolean;
 }
@@ -16,10 +16,6 @@ interface MarkerProps {
     onMouseEnter?: MarkerListenerFunction;
     onMouseOut?: MarkerListenerFunction;
     markerOptions: MarkerOptions;
-}
-interface MarkerListener {
-    eventName: google.maps.MarkerMouseEventNames;
-    listener: MarkerListenerFunction;
 }
 declare const useAddListenersToMarker: (marker: google.maps.Marker, listeners: MarkerListener[], changFlagged?: boolean) => void;
 declare const Marker: (props: MarkerProps) => JSX.Element;
