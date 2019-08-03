@@ -55,7 +55,8 @@ const MapControll = (props: MapControllProps = defaultProps) => {
         setDivIndex(index);
 
         return () => {
-            map.controls[props.position].removeAt(index);
+            const renderedAfterPreviousRemove = map.controls[props.position].getAt(index);
+            renderedAfterPreviousRemove && map.controls[props.position].removeAt(index);
         };
     }, []);
 
@@ -68,7 +69,7 @@ const MapControll = (props: MapControllProps = defaultProps) => {
     }, [controlDiv, divIndex]);
 
     React.useEffect(() => {
-        if (controlDiv && (divIndex !== null || undefined)) {
+        if (controlDiv && divIndex !== (null || undefined)) {
             updateStyles();
         }
     }, [offsets, containerStyle]);
