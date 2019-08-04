@@ -11,4 +11,4 @@ interface ClusteringSettings<MarkerType extends google.maps.Marker = google.maps
 }
 declare const OptimizedMarkerClusterer: (props: OptimizedClustererProps<google.maps.Marker>) => JSX.Element;
 export default OptimizedMarkerClusterer;
-export { OptimizedClustererProps as SpiderifiChildrenProps };
+export { OptimizedClustererProps, ClusteringSettings };

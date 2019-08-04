@@ -90,4 +90,4 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
 
 export default OptimizedMarkerClusterer;
 
-export { OptimizedClustererProps as SpiderifiChildrenProps };
+export { OptimizedClustererProps, ClusteringSettings };
