@@ -4,6 +4,9 @@ declare type MarkerListenerFunction = (marker: google.maps.Marker, event: MouseE
 interface Optimizations {
     listenersChanged?: boolean;
 }
+interface MarkerOptions extends google.maps.MarkerOptions {
+    [custom: string]: any;
+}
 interface MarkerProps {
     [index: string]: any;
     children?: React.ReactNode;
@@ -12,7 +15,7 @@ interface MarkerProps {
     onClick?: MarkerListenerFunction;
     onMouseEnter?: MarkerListenerFunction;
     onMouseOut?: MarkerListenerFunction;
-    markerOptions: google.maps.MarkerOptions;
+    markerOptions: MarkerOptions;
 }
 interface MarkerListener {
     eventName: google.maps.MarkerMouseEventNames;
