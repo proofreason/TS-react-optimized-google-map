@@ -62,6 +62,8 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
     }, [contextState.clusterer]);
 
     const handleClusterClick = (cluster: Cluster) => {
+        const { onClickExtender } = props.clusteringSettings;
+        onClickExtender(cluster.getMarkers());
         const ClusterMap = cluster.getMap();
         const padding = 100;
         if (ClusterMap.getZoom() <= contextState.clusterer.getMaxZoom()) {
