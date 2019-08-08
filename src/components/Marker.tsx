@@ -136,4 +136,4 @@ const MarkerInner = (props: MarkerProps) => {
 
 export default Marker;
 
-export { MarkerProps, useAddListenersToMarker };
+export { MarkerProps, useAddListenersToMarker, MarkerOptions };

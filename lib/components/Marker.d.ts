@@ -24,4 +24,4 @@ interface MarkerListener {
 declare const useAddListenersToMarker: (marker: google.maps.Marker, listeners: MarkerListener[], changFlagged?: boolean) => void;
 declare const Marker: (props: MarkerProps) => JSX.Element;
 export default Marker;
-export { MarkerProps, useAddListenersToMarker };
+export { MarkerProps, useAddListenersToMarker, MarkerOptions };
