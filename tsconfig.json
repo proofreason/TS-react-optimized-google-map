@@ -20,9 +20,6 @@
             "@lib/*": [
                 "src/lib/*"
             ],
-            "@src_types/*": [
-                "src/types/*"
-            ],
             "@typings/*": [
                 "src/typings/*"
             ],

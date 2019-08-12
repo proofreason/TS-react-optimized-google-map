@@ -1,6 +1,6 @@
 import * as React from 'react';
 var useEffect = React.useEffect;
-var MarkerMounterContext = React.createContext([
+var MarkerArrayContext = React.createContext([
     { addObject: null, removeObject: null, map: null },
     null,
 ]);
@@ -17,5 +17,5 @@ var useAddToObjectMounter = function (objectMounterContext, props) {
     }, []);
     return marker;
 };
-export { MarkerMounterContext, useAddToObjectMounter, objectMounterReady, };
+export { MarkerArrayContext, useAddToObjectMounter, objectMounterReady, };
 //# sourceMappingURL=ObjectMounterContext.js.map

@@ -5,7 +5,7 @@ import {
 } from '@context/MarkerClustererContext';
 import * as MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
 import * as React from 'react';
-import MarkerMounter from './googleMapsMounter/MarkerMounter';
+import MarkerArray from './googleMapsMounter/MarkerArray';
 
 interface OptimizedMarkerClustererState {
     context: MarkerClustererContextType;
@@ -76,15 +76,15 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
 
     const getMountedMarkersAndRefresh = (markers: google.maps.Marker[]) => {
         onMountedMarkersChange && onMountedMarkersChange(markers);
-        // TODO: remove if everything works contextState.clusterer.repaint();
+        contextState.clusterer.repaint();
     };
 
     return (
         contextState.clusterer && (
             <MarkerClustererContext.Provider value={context}>
-                <MarkerMounter onMountedMarkersChange={getMountedMarkersAndRefresh}>
+                <MarkerArray onMountedMarkersChange={getMountedMarkersAndRefresh}>
                     {children}
-                </MarkerMounter>
+                </MarkerArray>
             </MarkerClustererContext.Provider>
         )
     );

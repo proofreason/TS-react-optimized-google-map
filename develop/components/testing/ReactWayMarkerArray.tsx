@@ -1,5 +1,5 @@
 import GoogleMapsMounter from '@components/GoogleMapsMounter';
-import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
+import MarkerArray from '@components/googleMapsMounter/MarkerArray';
 import GoogleScriptMounter from '@components/GoogleScriptMounter';
 import InfoBox from '@components/InfoBox';
 import MapControll from '@components/MapControll';
@@ -29,6 +29,7 @@ const MapInitializer = () => {
     const toggleDisplayMarkers = () => {
         displayMarkers ? setDisplayMarkers(false) : setDisplayMarkers(true);
     };
+
     return (
         <GoogleScriptMounter key={0} scriptUrl={GOOGLE_API_URL} onScriptLoad={setScriptIsLoaded}>
             <div>Script is {isScriptLoaded ? 'loaded' : 'not loaded'}</div>
@@ -41,7 +42,8 @@ const MapInitializer = () => {
                     <OptimizedMarkerClusterer
                         clusteringSettings={{
                             ignoreHidden: true,
-                            batchSize: 30000,
+                            averageCenter: true,
+                            enableRetinaIcons: false,
                         }}
                     >
                         <MarkerDeployer display={displayMarkers} />

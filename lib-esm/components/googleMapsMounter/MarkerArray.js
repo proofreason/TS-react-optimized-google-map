@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
 };
 import MapMounterContext from "../../context/MapMounterContext";
 import { MarkerClustererContext } from "../../context/MarkerClustererContext";
-import { MarkerMounterContext } from "../../context/ObjectMounterContext";
+import { MarkerArrayContext } from "../../context/ObjectMounterContext";
 import { useHideOutOfFovMarkers } from "../../lib/Optimization";
 import * as React from 'react';
 var useState = React.useState, useContext = React.useContext;
@@ -22,18 +22,19 @@ var DEFAULT_MARKER_ARRAY_PROPS = {
 var addMarker = function (_a, map, clusterer) {
     var mountedMarkers = _a[0], setMountedMarkers = _a[1];
     return function (markerProps, id) {
-        if (mountedMarkers[id] && !mountedMarkers[id].isToBeRemoved) {
+        if (mountedMarkers[id]) {
             console.warn("tried to add marker with id " + id + "\n            to MarkerArray. Marker with this id already exists,\n            if you want to replace it, remove it first.");
             return null;
         }
-        if (mountedMarkers[id]) {
-            clusterer && clusterer.removeMarker(mountedMarkers[id], true);
-            mountedMarkers[id].setMap(null);
-        }
         var newMarker = new google.maps.Marker(markerProps.markerOptions);
-        newMarker.isToBeRemoved = false;
-        newMarker.id = id;
+        if (clusterer) {
+            clusterer.addMarker(newMarker, true);
+        }
+        else {
+            newMarker.setMap(map);
+        }
         mountedMarkers[id] = newMarker;
+        setMountedMarkers(mountedMarkers.slice());
         return mountedMarkers[id];
     };
 };
@@ -44,36 +45,19 @@ var removeMarker = function (_a, clusterer) {
             console.warn("tried to remove marker with id " + id + "\n            from MarkerArray. Marker with this id does not exists.");
             return false;
         }
-        mountedMarkers[id].isToBeRemoved = true;
-        return true;
+        if (mountedMarkers[id]) {
+            if (clusterer) {
+                clusterer.removeMarker(mountedMarkers[id], true);
+            }
+            mountedMarkers[id].setMap(null);
+            // tslint:disable-next-line
+            delete mountedMarkers[id];
+            setMountedMarkers(mountedMarkers.slice());
+            return true;
+        }
     };
 };
-var removeMarkersMarkedToBeRemoved = function (markers, clusterer, map) {
-    var markersToRemove = markers.filter(function (marker) { return marker.isToBeRemoved; });
-    if (clusterer) {
-        clusterer.removeMarkers(markersToRemove, false);
-    }
-    markersToRemove.map(function (markerToRemove) {
-        markerToRemove.setMap(null);
-        // tslint:disable-next-line
-        delete markers[markerToRemove.id];
-    });
-};
-var addMarkersToMap = function (markers, clusterer, map) {
-    if (clusterer) {
-        clusterer.addMarkers(markers, true);
-    }
-    else {
-        markers.map(function (marker) {
-            if (marker.getMap() === map) {
-                return marker;
-            }
-            marker.setMap(map);
-            return marker;
-        });
-    }
-};
-var MarkerMounter = function (props) {
+var MarkerArray = function (props) {
     if (props === void 0) { props = DEFAULT_MARKER_ARRAY_PROPS; }
     var currentProps = __assign({}, DEFAULT_MARKER_ARRAY_PROPS, props);
     var children = currentProps.children, displayOnlyInFov = currentProps.displayOnlyInFov;
@@ -93,27 +77,13 @@ var MarkerMounter = function (props) {
             }
             props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
         });
+    props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
     var context = useState({
         map: mapContext.map,
         addObject: addMarker(mountedMarkersState, mapContext.map, clustererContext.clusterer),
         removeObject: removeMarker(mountedMarkersState, clustererContext.clusterer),
     });
-    var constextState = context[0], setContextState = context[1];
-    React.useEffect(function () {
-        if (!mountedMarkers) {
-            return;
-        }
-        var clusterer = clustererContext.clusterer;
-        removeMarkersMarkedToBeRemoved(mountedMarkers, clusterer, map);
-        addMarkersToMap(mountedMarkers, clusterer, map);
-        clusterer.repaint();
-        setMountedMarkers(mountedMarkers.slice());
-    }, [children]);
-    React.useEffect(function () {
-        setContextState(__assign({}, constextState, { addObject: addMarker(mountedMarkersState, mapContext.map, clustererContext.clusterer), removeObject: removeMarker(mountedMarkersState, clustererContext.clusterer) }));
-    }, [mountedMarkers]);
-    props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
-    return (React.createElement(MarkerMounterContext.Provider, { value: context }, children));
+    return React.createElement(MarkerArrayContext.Provider, { value: context }, children);
 };
-export default MarkerMounter;
-//# sourceMappingURL=MarkerMounter.js.map
+export default MarkerArray;
+//# sourceMappingURL=MarkerArray.js.map

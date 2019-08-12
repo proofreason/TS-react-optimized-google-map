@@ -2,16 +2,20 @@ import AsyncMarkerArrayContext, {
     useAddToAsyncMounter,
     asyncMounterReady,
 } from '@context/AsyncMounterContext';
+import MapMounterContext, {
+    MapMounterContextType,
+    MapMounterContextProps,
+} from '@context/MapMounterContext';
 import {
     useAddToObjectMounter,
-    MarkerMounterContext,
+    MarkerArrayContext,
     objectMounterReady,
 } from '@context/ObjectMounterContext';
-import { addListenersToMarker } from '@lib/MapUtils';
-import { MarkerListenerFunction, MarkerListener } from '../types/mapTypes';
 import * as React from 'react';
 
 const { useContext, useEffect } = React;
+
+type MarkerListenerFunction = (marker: google.maps.Marker, event: MouseEvent) => void;
 
 interface Optimizations {
     listenersChanged?: boolean;
@@ -40,8 +44,14 @@ const noMounterFound = () => {
 };
 
 const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
+    const [mapContext] = useContext(MapMounterContext);
     const [asyncMarkerArrayContext] = useContext(AsyncMarkerArrayContext);
-    const [markerArrayContext] = useContext(MarkerMounterContext);
+    const [markerArrayContext] = useContext(MarkerArrayContext);
+
+    // async loading has preccedence
+    if (objectMounterReady(asyncMarkerArrayContext)) {
+        return useAddToAsyncMounter(asyncMarkerArrayContext, props);
+    }
 
     if (objectMounterReady(markerArrayContext)) {
         return useAddToObjectMounter(markerArrayContext, props);
@@ -49,6 +59,11 @@ const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
 
     noMounterFound();
 };
+
+interface MarkerListener {
+    eventName: google.maps.MarkerMouseEventNames;
+    listener: MarkerListenerFunction;
+}
 
 const useAddListenersToMarker = (
     marker: google.maps.Marker,
@@ -60,7 +75,15 @@ const useAddListenersToMarker = (
     const toWatch = changFlagged === null ? [markerValid, listeners] : [markerValid, changFlagged];
     useEffect(() => {
         if (markerValid) {
-            activeListeners.concat(addListenersToMarker(listeners, marker));
+            listeners.map(({ eventName, listener }) => {
+                if (!listener) {
+                    return null;
+                }
+                const enhancedListener = (event: MouseEvent) => listener(marker, event);
+                // tslint:disable-next-line
+                const addedListener = marker.addListener(eventName, enhancedListener);
+                activeListeners.push(addedListener);
+            });
         }
         return () => {
             activeListeners.map((listener) => {
@@ -82,6 +105,11 @@ const useUpdateOnPropsChange = (
 };
 
 const Marker = (props: MarkerProps) => {
+    const { position } = props.markerOptions;
+    const boxPosition =
+        position instanceof google.maps.LatLng
+            ? position
+            : new google.maps.LatLng(position.lat, position.lng);
     return (
         <MarkerInner {...props} key={props.id}>
             {props.children}

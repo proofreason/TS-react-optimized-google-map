@@ -13,14 +13,14 @@ interface ObjectMounterContextProps<ObjectPropsType, ReturnType> {
     removeObject: (id: number) => boolean;
 }
 
-type MarkerMounterContextProps = ObjectMounterContextProps<MarkerProps, google.maps.Marker>;
+type MarkerArrayContextProps = ObjectMounterContextProps<MarkerProps, google.maps.Marker>;
 
-type MarkerMounterContextType = [
-    MarkerMounterContextProps,
-    React.Dispatch<React.SetStateAction<MarkerMounterContextProps>>,
+type MarkerArrayContextType = [
+    MarkerArrayContextProps,
+    React.Dispatch<React.SetStateAction<MarkerArrayContextProps>>,
 ];
 
-const MarkerMounterContext = React.createContext<MarkerMounterContextType>([
+const MarkerArrayContext = React.createContext<MarkerArrayContextType>([
     { addObject: null, removeObject: null, map: null },
     null,
 ]);
@@ -45,9 +45,9 @@ const useAddToObjectMounter = <ObjectTypeProps extends ObjectProps, GoogleMapsOb
 export {
     ObjectMounterContextProps,
     ObjectProps,
-    MarkerMounterContextProps,
-    MarkerMounterContextType,
-    MarkerMounterContext,
+    MarkerArrayContextProps,
+    MarkerArrayContextType,
+    MarkerArrayContext,
     useAddToObjectMounter,
     objectMounterReady,
 };

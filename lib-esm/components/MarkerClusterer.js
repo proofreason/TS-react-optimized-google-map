@@ -13,7 +13,7 @@ import MapMounterContext from "../context/MapMounterContext";
 import { MarkerClustererContext, } from "../context/MarkerClustererContext";
 import * as MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
 import * as React from 'react';
-import MarkerMounter from './googleMapsMounter/MarkerMounter';
+import MarkerArray from './googleMapsMounter/MarkerArray';
 var INITIAL_STATE = {
     context: [{ clusterer: null }, null],
 };
@@ -55,10 +55,10 @@ var OptimizedMarkerClusterer = function (props) {
     };
     var getMountedMarkersAndRefresh = function (markers) {
         onMountedMarkersChange && onMountedMarkersChange(markers);
-        // TODO: remove if everything works contextState.clusterer.repaint();
+        contextState.clusterer.repaint();
     };
     return (contextState.clusterer && (React.createElement(MarkerClustererContext.Provider, { value: context },
-        React.createElement(MarkerMounter, { onMountedMarkersChange: getMountedMarkersAndRefresh }, children))));
+        React.createElement(MarkerArray, { onMountedMarkersChange: getMountedMarkersAndRefresh }, children))));
 };
 export default OptimizedMarkerClusterer;
 //# sourceMappingURL=MarkerClusterer.js.map

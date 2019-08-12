@@ -2,10 +2,9 @@ import { LatLngPosition, getRandomLocations } from '@develop_lib/markerUtils';
 import { useMarkerCache, updateMarkerCache } from '@lib/Optimization';
 import * as React from 'react';
 const { useState } = React;
-import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
-import Marker, { MarkerProps } from '@components/Marker';
-import MarkerBatch from '@components/MarkerBatch';
+import Marker from '@components/Marker';
 import MapMounterContext from '@context/MapMounterContext';
+import { MarkerProps } from 'lib';
 import * as MarkerIconSelected from './img/marker-black.svg';
 import * as MarkerIcon from './img/marker-yellow.svg';
 
@@ -52,7 +51,6 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
                 id: index,
                 optimizations: { listenersChanged: false },
                 markerOptions: {
-                    position: location,
                     draggable: false,
                     optimized: true,
                     visible: true,
@@ -72,39 +70,22 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
     if (markerCache && selectedId) {
         updateMarkerCache([markerCache, setMarkerCache], selectedId, {
             onClick: setSelected(selectedId),
+            icon: MarkerIconSelected,
             id: selectedId,
+            position: locations[selectedId],
             optimizations: { listenersChanged: false },
-            markerOptions: {
-                icon: MarkerIconSelected,
-                position: locations[selectedId],
-            },
         });
     }
 
     if (markerCache && prevSelectedId) {
         updateMarkerCache([markerCache, setMarkerCache], prevSelectedId, {
             onClick: setSelected(prevSelectedId),
+            icon: MarkerIcon,
             id: prevSelectedId,
+            position: locations[prevSelectedId],
             optimizations: { listenersChanged: false },
-            markerOptions: {
-                icon: MarkerIcon,
-                position: locations[prevSelectedId],
-            },
         });
     }
-
-    React.useEffect(() => {
-        if (markerCache && false) {
-            props.map((prop) => {
-                updateMarkerCache([markerCache, setMarkerCache], prop.id, {
-                    ...prop,
-                    markerOptions: {
-                        visible: display && displayMarkers,
-                    },
-                });
-            });
-        }
-    }, [display]);
 
     const toggleDisplayMarkers = () => {
         displayMarkers ? setDisplayMarkers(false) : setDisplayMarkers(true);
@@ -121,11 +102,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
             return () => listener.remove();
         }
     }, [mapMounterContext.map, displayMarkers]);
-    return (
-        <MarkerMounter>
-            <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>
-        </MarkerMounter>
-    );
+    return <>{displayMarkers && display && markerCache}</>;
 };
 
 export default MarkerDeployer;
