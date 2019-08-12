@@ -6,5 +6,5 @@ interface MarkerArrayProps {
     displayOnlyInFov?: boolean;
     onMountedMarkersChange?: (markers: google.maps.Marker[]) => void;
 }
-declare const MarkerArray: (props?: MarkerArrayProps) => JSX.Element;
-export default MarkerArray;
+declare const MarkerMounter: (props?: MarkerArrayProps) => JSX.Element;
+export default MarkerMounter;

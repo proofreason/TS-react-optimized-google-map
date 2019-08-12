@@ -11,9 +11,16 @@ const useMarkerCache = (markerProps: MarkerProps[]) => {
     return [markerCache, setMarkerCache];
 };
 
+interface IndexedMarkerOptions extends google.maps.MarkerOptions {
+    [index: string]: any;
+}
+
 // this can be further opimized
 const updateMarkerCache = (
-    markersCache: [JSX.Element[], React.Dispatch<JSX.Element[]>],
+    markersCache: [
+        React.ComponentElement<MarkerProps, null>[],
+        React.Dispatch<React.ComponentElement<MarkerProps, null>[]>,
+    ],
     id: number,
     props: MarkerProps,
     immutable = true,
@@ -22,15 +29,8 @@ const updateMarkerCache = (
     const [markersArray, setMarkerArray] = markersCache;
 
     if (markersArray[id]) {
-        const { onClick, onMouseEnter, onMouseOut, optimizations, ...toCompare } = props;
-        const {
-            onClick: ra,
-            onMouseEnter: rb,
-            onMouseOut: rc,
-            optimizations: rd,
-            // tslint:disable-next-line
-            ...toCompareOld
-        } = markersArray[id].props;
+        const toCompare: IndexedMarkerOptions = props.markerOptions;
+        const toCompareOld: IndexedMarkerOptions = markersArray[id].props.markerOptions;
 
         const ownKeysOld = getOwnKeysOfObject(toCompareOld);
         const ownKeysNew = getOwnKeysOfObject(toCompare);

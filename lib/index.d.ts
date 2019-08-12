@@ -20,6 +20,6 @@ export * from './context/MarkerClustererContext';
 export * from './context/ObjectMounterContext';
 export * from './context/WithSelectedContext';
 export { default as WithSelectedContext } from './context/WithSelectedContext';
-export * from './components/googleMapsMounter/MarkerArray';
-export { default as MarkerArray } from './components/googleMapsMounter/MarkerArray';
+export * from './components/googleMapsMounter/MarkerMounter';
+export { default as MarkerMounter } from './components/googleMapsMounter/MarkerMounter';
 export * from './lib/Utils';

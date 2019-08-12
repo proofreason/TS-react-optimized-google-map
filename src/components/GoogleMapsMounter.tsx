@@ -1,7 +1,7 @@
 import MapMounterContext from '@context/MapMounterContext';
 import { googleMapsLoaded } from '@lib/Utils';
 import * as React from 'react';
-import MarkerArray from './googleMapsMounter/MarkerArray';
+import MarkerMounter from './googleMapsMounter/MarkerMounter';
 const { useEffect, useState } = React;
 
 interface GoogleMapsMounterProps extends google.maps.MapOptions {
@@ -59,9 +59,9 @@ const GoogleMapsMounter = React.memo((props: GoogleMapsMounterProps = DEFAULT_PR
                 {mapElement}
                 {contextState.map &&
                     (props.withMounter ? (
-                        <MarkerArray onMountedMarkersChange={getMountedMarkers} key={0}>
+                        <MarkerMounter onMountedMarkersChange={getMountedMarkers} key={0}>
                             <div className="react-map-added-content">{children}</div>
-                        </MarkerArray>
+                        </MarkerMounter>
                     ) : (
                         <div className="react-map-added-content">{children}</div>
                     ))}
