@@ -12,7 +12,7 @@ var __assign = (this && this.__assign) || function () {
 import MapMounterContext from "../context/MapMounterContext";
 import { googleMapsLoaded } from "../lib/Utils";
 import * as React from 'react';
-import MarkerArray from './googleMapsMounter/MarkerArray';
+import MarkerMounter from './googleMapsMounter/MarkerMounter';
 var useEffect = React.useEffect, useState = React.useState;
 var DEFAULT_ELEMENT_ID = 'google-maps-element';
 var DEFAULT_PROPS = {
@@ -49,7 +49,7 @@ var GoogleMapsMounter = React.memo(function (props) {
         React.createElement("div", { className: 'react-map-content-wrapper', style: mapWrapperStyle },
             mapElement,
             contextState.map &&
-                (props.withMounter ? (React.createElement(MarkerArray, { onMountedMarkersChange: getMountedMarkers, key: 0 },
+                (props.withMounter ? (React.createElement(MarkerMounter, { onMountedMarkersChange: getMountedMarkers, key: 0 },
                     React.createElement("div", { className: "react-map-added-content" }, children))) : (React.createElement("div", { className: "react-map-added-content" }, children))))));
 });
 export default GoogleMapsMounter;

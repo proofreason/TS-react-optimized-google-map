@@ -46,15 +46,6 @@ const MapInitializer = () => {
                     >
                         <MarkerDeployer display={displayMarkers} />
                     </OptimizedMarkerClusterer>
-                    <InfoBox
-                        closeBoxURL=""
-                        boxStyle={{ color: 'blue' }}
-                        boxClass={'my awesome class'}
-                        open={true}
-                        position={new google.maps.LatLng(CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG)}
-                    >
-                        <div style={{ backgroundColor: 'red' }}>My awesome label</div>
-                    </InfoBox>
                     <MapControll
                         position={google.maps.ControlPosition.LEFT_CENTER}
                         offsets={{ topOffset: 25 }}

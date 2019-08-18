@@ -121,11 +121,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
             return () => listener.remove();
         }
     }, [mapMounterContext.map, displayMarkers]);
-    return (
-        <MarkerMounter>
-            <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>
-        </MarkerMounter>
-    );
+    return <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>;
 };
 
 export default MarkerDeployer;

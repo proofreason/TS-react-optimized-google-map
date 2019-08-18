@@ -71,18 +71,21 @@ const useHideOutOfFovMarkers = (
     markers: google.maps.Marker[],
     map: google.maps.Map,
     callback?: () => void,
+    active = true,
 ) => {
     const realodOnChange = () => {
         hideOutOfFovMarkers(markers, map);
         callback && callback();
     };
     useEffect(() => {
-        realodOnChange();
-        const listener = map.addListener('idle', () => {
-            realodOnChange();
-        });
-        return () => listener.remove();
-    }, [markers]);
+        active && realodOnChange();
+        const listener =
+            active &&
+            map.addListener('idle', () => {
+                realodOnChange();
+            });
+        return () => listener && listener.remove();
+    }, [markers, active]);
 };
 
 export { useMarkerCache, updateMarkerCache, useHideOutOfFovMarkers };
