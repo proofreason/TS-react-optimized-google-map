@@ -94,14 +94,20 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
     }
 
     React.useEffect(() => {
-        if (markerCache && false) {
+        if (markerCache) {
             props.map((prop) => {
-                updateMarkerCache([markerCache, setMarkerCache], prop.id, {
-                    ...prop,
-                    markerOptions: {
-                        visible: display && displayMarkers,
+                updateMarkerCache(
+                    [markerCache, setMarkerCache],
+                    prop.id,
+                    {
+                        ...prop,
+                        markerOptions: {
+                            ...prop.markerOptions,
+                            visible: true,
+                        },
                     },
-                });
+                    false,
+                );
             });
         }
     }, [display]);
@@ -124,11 +130,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
     if (!display) {
         return <></>;
     }
-    return (
-        <MarkerMounter>
-            <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>
-        </MarkerMounter>
-    );
+    return <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>;
 };
 
 export default MarkerDeployer;

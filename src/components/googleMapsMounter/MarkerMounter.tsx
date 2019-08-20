@@ -148,6 +148,7 @@ const useUpdateContext = (
     const [mountedMarkers] = reallyMountedMarkers;
     useEffect(() => {
         const [constextState, setContextState] = mounterContext;
+        constextState.stateObject.isUnmounted = false;
         setContextState({
             ...constextState,
             addObject: addMarker(

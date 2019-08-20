@@ -4,11 +4,24 @@ import { MarkerListener } from '@src_types/mapTypes';
 import { makeRe } from 'minimatch';
 import * as React from 'react';
 import Marker, { MarkerProps } from './Marker';
-const { Children, useContext, useState } = React;
+const { Children, useContext, useState, useEffect } = React;
 
+type ChildrenType = React.ComponentElement<MarkerProps, null>[];
 interface MarkerBatchProps {
-    children: React.ComponentElement<MarkerProps, null>[];
+    children: ChildrenType;
 }
+
+type MarkersChildrenState = [
+    React.ReactNode,
+    React.Dispatch<React.SetStateAction<React.ReactNode>>,
+];
+
+type PrevListenersState = [
+    google.maps.MapsEventListener[],
+    React.Dispatch<React.SetStateAction<google.maps.MapsEventListener[]>>,
+];
+
+type PrevMarkerPropsState = [MarkerProps[], React.Dispatch<React.SetStateAction<MarkerProps[]>>];
 
 const removeDeprecated = (
     markersProps: MarkerProps[],
@@ -58,23 +71,37 @@ const getPropertiesFromChildren = (
     return [markerProps, markerListenerFncs, markersChildren];
 };
 
-const MarkerBatch = ({ children }: MarkerBatchProps) => {
-    const mounterContext = useContext(MarkerMounterContext);
-    const [prevMarkerProps, setPrevMarkerProps]: [
-        MarkerProps[],
-        React.SetStateAction<React.Dispatch<MarkerProps[]>>,
-    ] = useState([]);
-    const [prevListeners, setPrevListeners]: [
-        google.maps.MapsEventListener[],
-        React.SetStateAction<React.Dispatch<google.maps.MapsEventListener[]>>,
-    ] = useState([]);
-    const [markersChildren, setMarkersChildren] = useState([]);
+const useCleanupOldMarkers = (
+    children: ChildrenType,
+    prevMarkerPropsState: PrevMarkerPropsState,
+    prevListenersState: PrevListenersState,
+    mounterContext: MarkerMounterContextType,
+) => {
+    const [prevMarkerProps, setPrevMarkerProps] = prevMarkerPropsState;
+    const [prevListeners, setPrevListeners] = prevListenersState;
 
-    React.useEffect(() => {
+    useEffect(() => {
+        return () => {
+            removeDeprecated(prevMarkerProps, prevListeners, mounterContext);
+        };
+    }, [prevMarkerProps]);
+};
+
+const useUpdateFromChildren = (
+    children: ChildrenType,
+    markersChildrenState: MarkersChildrenState,
+    prevMarkerPropsState: PrevMarkerPropsState,
+    prevListenersState: PrevListenersState,
+    mounterContext: MarkerMounterContextType,
+) => {
+    useEffect(() => {
+        const [prevMarkerProps, setPrevMarkerProps] = prevMarkerPropsState;
+        const [prevListeners, setPrevListeners] = prevListenersState;
+        const [markersChildren, setMarkersChildren] = markersChildrenState;
         if (!mounterContext) {
             return;
         }
-        removeDeprecated(prevMarkerProps, prevListeners, mounterContext);
+        // notify cleanup that change happened
         setPrevMarkerProps([]);
         setPrevListeners([]);
         if (!children) {
@@ -90,6 +117,23 @@ const MarkerBatch = ({ children }: MarkerBatchProps) => {
         setPrevMarkerProps(markerProps);
         setPrevListeners(listeners);
     }, [children]);
+};
+
+const MarkerBatch = ({ children }: MarkerBatchProps) => {
+    const mounterContext = useContext(MarkerMounterContext);
+    const prevMarkerPropsState: PrevMarkerPropsState = useState([]);
+    const prevListenersState: PrevListenersState = useState([]);
+    const childrenState: MarkersChildrenState = useState([]);
+    const [markersChildren] = childrenState;
+
+    useCleanupOldMarkers(children, prevMarkerPropsState, prevListenersState, mounterContext);
+    useUpdateFromChildren(
+        children,
+        childrenState,
+        prevMarkerPropsState,
+        prevListenersState,
+        mounterContext,
+    );
 
     return <>{markersChildren}</>;
 };

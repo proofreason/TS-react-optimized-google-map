@@ -1,7 +1,7 @@
 import { MarkerMounterContext } from "../context/ObjectMounterContext";
 import { addListenersToMarker } from "../lib/MapUtils";
 import * as React from 'react';
-var Children = React.Children, useContext = React.useContext, useState = React.useState;
+var Children = React.Children, useContext = React.useContext, useState = React.useState, useEffect = React.useEffect;
 var removeDeprecated = function (markersProps, listeners, mounterContext) {
     var mounter = mounterContext[0];
     markersProps.map(function (markerProps) {
@@ -37,17 +37,24 @@ var getPropertiesFromChildren = function (children) {
     });
     return [markerProps, markerListenerFncs, markersChildren];
 };
-var MarkerBatch = function (_a) {
-    var children = _a.children;
-    var mounterContext = useContext(MarkerMounterContext);
-    var _b = useState([]), prevMarkerProps = _b[0], setPrevMarkerProps = _b[1];
-    var _c = useState([]), prevListeners = _c[0], setPrevListeners = _c[1];
-    var _d = useState([]), markersChildren = _d[0], setMarkersChildren = _d[1];
-    React.useEffect(function () {
+var useCleanupOldMarkers = function (children, prevMarkerPropsState, prevListenersState, mounterContext) {
+    var prevMarkerProps = prevMarkerPropsState[0], setPrevMarkerProps = prevMarkerPropsState[1];
+    var prevListeners = prevListenersState[0], setPrevListeners = prevListenersState[1];
+    useEffect(function () {
+        return function () {
+            removeDeprecated(prevMarkerProps, prevListeners, mounterContext);
+        };
+    }, [prevMarkerProps]);
+};
+var useUpdateFromChildren = function (children, markersChildrenState, prevMarkerPropsState, prevListenersState, mounterContext) {
+    useEffect(function () {
+        var prevMarkerProps = prevMarkerPropsState[0], setPrevMarkerProps = prevMarkerPropsState[1];
+        var prevListeners = prevListenersState[0], setPrevListeners = prevListenersState[1];
+        var markersChildren = markersChildrenState[0], setMarkersChildren = markersChildrenState[1];
         if (!mounterContext) {
             return;
         }
-        removeDeprecated(prevMarkerProps, prevListeners, mounterContext);
+        // notify cleanup that change happened
         setPrevMarkerProps([]);
         setPrevListeners([]);
         if (!children) {
@@ -59,6 +66,16 @@ var MarkerBatch = function (_a) {
         setPrevMarkerProps(markerProps);
         setPrevListeners(listeners);
     }, [children]);
+};
+var MarkerBatch = function (_a) {
+    var children = _a.children;
+    var mounterContext = useContext(MarkerMounterContext);
+    var prevMarkerPropsState = useState([]);
+    var prevListenersState = useState([]);
+    var childrenState = useState([]);
+    var markersChildren = childrenState[0];
+    useCleanupOldMarkers(children, prevMarkerPropsState, prevListenersState, mounterContext);
+    useUpdateFromChildren(children, childrenState, prevMarkerPropsState, prevListenersState, mounterContext);
     return React.createElement(React.Fragment, null, markersChildren);
 };
 export default MarkerBatch;

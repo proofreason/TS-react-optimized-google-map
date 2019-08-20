@@ -47,6 +47,7 @@ const MapInitializer = () => {
                     >
                         <MarkerDeployer display={displayMarkers} />
                     </OptimizedMarkerClusterer>
+
                     <MapControll
                         position={google.maps.ControlPosition.LEFT_CENTER}
                         offsets={{ topOffset: 25 }}

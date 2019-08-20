@@ -101,6 +101,7 @@ var useUpdateContext = function (markersChangedFlag, reallyMountedMarkers, mount
     var mountedMarkers = reallyMountedMarkers[0];
     useEffect(function () {
         var constextState = mounterContext[0], setContextState = mounterContext[1];
+        constextState.stateObject.isUnmounted = false;
         setContextState(__assign({}, constextState, { addObject: addMarker(reallyMountedMarkers, markersChangedFlag, clustererContext.clusterer), removeObject: removeMarker(reallyMountedMarkers, markersChangedFlag) }));
         return function () {
             constextState.stateObject.isUnmounted = true;
