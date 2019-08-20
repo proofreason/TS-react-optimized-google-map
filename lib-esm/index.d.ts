@@ -1,3 +1,5 @@
+export * from './components/MarkerBatch';
+export { default as MarkerBatch } from './components/MarkerBatch';
 export * from './components/GoogleMapsMounter';
 export { default as GoogleMapsMounter } from './components/GoogleMapsMounter';
 export * from './components/GoogleScriptMounter';

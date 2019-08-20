@@ -17,7 +17,7 @@ type AsyncMarkerArrayContextType = [
 ];
 
 const AsyncMarkerArrayContext = React.createContext<AsyncMarkerArrayContextType>([
-    { addObject: null, removeObject: null, map: null },
+    { addObject: null, removeObject: null, map: null, stateObject: { isUnmounted: false } },
     null,
 ]);
 

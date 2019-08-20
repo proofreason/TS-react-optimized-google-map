@@ -10,11 +10,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import MapMounterContext from "../../context/MapMounterContext";
-import { MarkerClustererContext } from "../../context/MarkerClustererContext";
+import { MarkerClustererContext, } from "../../context/MarkerClustererContext";
 import { MarkerMounterContext } from "../../context/ObjectMounterContext";
 import { useHideOutOfFovMarkers } from "../../lib/Optimization";
 import * as React from 'react';
-var useState = React.useState, useContext = React.useContext;
+var useState = React.useState, useContext = React.useContext, useEffect = React.useEffect;
 var DEFAULT_MARKER_ARRAY_PROPS = {
     batchSize: 50,
     displayOnlyInFov: false,
@@ -24,7 +24,7 @@ var addMarker = function (_a, _b, clusterer) {
     var markersDidChange = _b[0], setMarkersDidCange = _b[1];
     return function (markerProps, id) {
         if (mountedMarkers[id] && !mountedMarkers[id].isToBeRemoved) {
-            console.warn("tried to add marker with id " + id + "\n            to MarkerArray. Marker with this id already exists,\n            if you want to replace it, remove it first.");
+            console.warn("tried to add marker with id " + id + "\n            to MarkerMounter. Marker with this id already exists,\n            if you want to replace it, remove it first.");
             return null;
         }
         if (mountedMarkers[id]) {
@@ -45,7 +45,7 @@ var removeMarker = function (_a, _b) {
     var markersDidChange = _b[0], setMarkersDidCange = _b[1];
     return function (id) {
         if (!mountedMarkers[id]) {
-            console.warn("tried to remove marker with id " + id + "\n            from MarkerArray. Marker with this id does not exists.");
+            console.warn("tried to remove marker with id " + id + "\n            from MarkerMounter. Marker with this id does not exists.");
             return false;
         }
         mountedMarkers[id].isToBeRemoved = true;
@@ -53,17 +53,23 @@ var removeMarker = function (_a, _b) {
         return true;
     };
 };
-var removeMarkersMarkedToBeRemoved = function (markers, clusterer, map) {
-    var markersToRemove = markers.filter(function (marker) { return marker.isToBeRemoved; });
+var removeMarkersFromMutable = function (markersToRemove, clusterer, removeFrom) {
     if (clusterer) {
-        clusterer.removeMarkers(markersToRemove, false);
+        clusterer.removeMarkers(markersToRemove, true);
         // TODO: can return here?
     }
     markersToRemove.map(function (markerToRemove) {
         markerToRemove.setMap(null);
-        // tslint:disable-next-line
-        delete markers[markerToRemove.id];
+        removeFrom
+            ? // tslint:disable-next-line
+                delete removeFrom[markerToRemove.id]
+            : // tslint:disable-next-line
+                delete markersToRemove[markerToRemove.id];
     });
+};
+var removeMarkersMarkedToBeRemoved = function (markers, clusterer, map) {
+    var markersToRemove = markers.filter(function (marker) { return marker.isToBeRemoved; });
+    removeMarkersFromMutable(markersToRemove, clusterer, markers);
 };
 var addMarkersToMap = function (markers, clusterer, map) {
     if (clusterer) {
@@ -79,6 +85,45 @@ var addMarkersToMap = function (markers, clusterer, map) {
         });
     }
 };
+var updateMarkers = function (markersDidCange, reallyMountedMarkers, mapContext, clustererContext) {
+    if (!markersDidCange) {
+        return false;
+    }
+    var clusterer = clustererContext.clusterer;
+    var mountedMarkers = reallyMountedMarkers[0], setMountedMarkers = reallyMountedMarkers[1];
+    removeMarkersMarkedToBeRemoved(mountedMarkers, clusterer, mapContext.map);
+    addMarkersToMap(mountedMarkers, clusterer, mapContext.map);
+    clusterer && clusterer.repaint();
+    setMountedMarkers(mountedMarkers.slice());
+    return true;
+};
+var useUpdateContext = function (markersChangedFlag, reallyMountedMarkers, mounterContext, clustererContext) {
+    var mountedMarkers = reallyMountedMarkers[0];
+    useEffect(function () {
+        var constextState = mounterContext[0], setContextState = mounterContext[1];
+        setContextState(__assign({}, constextState, { addObject: addMarker(reallyMountedMarkers, markersChangedFlag, clustererContext.clusterer), removeObject: removeMarker(reallyMountedMarkers, markersChangedFlag) }));
+        return function () {
+            constextState.stateObject.isUnmounted = true;
+        };
+    }, [mountedMarkers]);
+};
+var removeAllMarkers = function (reallyMountedMarkers, clustererContext) {
+    var clusterer = clustererContext.clusterer;
+    var mountedMarkers = reallyMountedMarkers[0];
+    removeMarkersFromMutable(mountedMarkers, clusterer);
+};
+var useCleanupOnUnmount = function (reallyMountedMarkers, clustererContext) {
+    var isUnmounted = false;
+    var clusterer = clustererContext.clusterer;
+    useEffect(function () {
+        return function () {
+            isUnmounted = true;
+            removeAllMarkers(reallyMountedMarkers, clustererContext);
+            clusterer && clusterer.repaint();
+        };
+    }, []);
+    return isUnmounted;
+};
 var MarkerMounter = function (props) {
     if (props === void 0) { props = DEFAULT_MARKER_ARRAY_PROPS; }
     var currentProps = __assign({}, DEFAULT_MARKER_ARRAY_PROPS, props);
@@ -87,39 +132,29 @@ var MarkerMounter = function (props) {
     var markersChangedFlag = useState(false);
     var _a = useContext(MapMounterContext), mapContext = _a[0], setMapContext = _a[1];
     var _b = useContext(MarkerClustererContext), clustererContext = _b[0], setClustererContext = _b[1];
-    var map = mapContext.map;
-    var mountedMarkers = reallyMountedMarkers[0], setMountedMarkers = reallyMountedMarkers[1];
-    var markersDidCange = markersChangedFlag[0], setMarkersDidCange = markersChangedFlag[1];
-    if (!mapContext) {
-        console.error('No map to mount to found. Did you place MarkerArry in MapMounter?');
-        return null;
-    }
     var context = useState({
+        stateObject: { isUnmounted: false },
         map: mapContext.map,
         addObject: addMarker(reallyMountedMarkers, markersChangedFlag, clustererContext.clusterer),
         removeObject: removeMarker(reallyMountedMarkers, markersChangedFlag),
     });
+    var map = mapContext.map;
+    var mountedMarkers = reallyMountedMarkers[0], setMountedMarkers = reallyMountedMarkers[1];
+    var markersDidCange = markersChangedFlag[0], setMarkersDidCange = markersChangedFlag[1];
     useHideOutOfFovMarkers(mountedMarkers, map, function () {
         if (clustererContext.clusterer && mountedMarkers) {
             clustererContext.clusterer.repaint();
         }
         props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
     }, displayOnlyInFov);
-    React.useEffect(function () {
-        if (!mountedMarkers || !markersDidCange) {
-            return;
-        }
-        var clusterer = clustererContext.clusterer;
-        removeMarkersMarkedToBeRemoved(mountedMarkers, clusterer, map);
-        addMarkersToMap(mountedMarkers, clusterer, map);
-        clusterer && clusterer.repaint();
-        setMountedMarkers(mountedMarkers.slice());
-        setMarkersDidCange(false);
-    }, [markersDidCange]);
-    React.useEffect(function () {
-        var constextState = context[0], setContextState = context[1];
-        setContextState(__assign({}, constextState, { addObject: addMarker(reallyMountedMarkers, markersChangedFlag, clustererContext.clusterer), removeObject: removeMarker(reallyMountedMarkers, markersChangedFlag) }));
-    }, [mountedMarkers]);
+    var isUnmounted = useCleanupOnUnmount(reallyMountedMarkers, clustererContext);
+    useUpdateContext(markersChangedFlag, reallyMountedMarkers, context, clustererContext);
+    if (!mapContext) {
+        console.error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
+        return null;
+    }
+    updateMarkers(markersDidCange, reallyMountedMarkers, mapContext, clustererContext);
+    markersDidCange && setMarkersDidCange(false);
     props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
     return (React.createElement(MarkerMounterContext.Provider, { value: context }, children));
 };

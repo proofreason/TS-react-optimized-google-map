@@ -4,6 +4,9 @@ import * as React from 'react';
 interface Optimizations {
     listenersChanged?: boolean;
 }
+interface MarkerOptions extends google.maps.MarkerOptions {
+    [custom: string]: any;
+}
 interface MarkerProps {
     [index: string]: any;
     children?: React.ReactNode;
@@ -12,9 +15,9 @@ interface MarkerProps {
     onClick?: MarkerListenerFunction;
     onMouseEnter?: MarkerListenerFunction;
     onMouseOut?: MarkerListenerFunction;
-    markerOptions: google.maps.MarkerOptions;
+    markerOptions: MarkerOptions;
 }
 declare const useAddListenersToMarker: (marker: google.maps.Marker, listeners: MarkerListener[], changFlagged?: boolean) => void;
 declare const Marker: (props: MarkerProps) => JSX.Element;
 export default Marker;
-export { MarkerProps, useAddListenersToMarker };
+export { MarkerProps, useAddListenersToMarker, MarkerOptions };

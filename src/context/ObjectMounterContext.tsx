@@ -6,11 +6,15 @@ interface ObjectProps {
     id: number;
 }
 
-// TODO: remove any
+interface UnmountedStateObject {
+    isUnmounted: boolean;
+}
+
 interface ObjectMounterContextProps<ObjectPropsType, ReturnType> {
     map: google.maps.Map;
     addObject: (object: ObjectPropsType, id: number) => ReturnType;
     removeObject: (id: number) => boolean;
+    stateObject: UnmountedStateObject;
 }
 
 type MarkerMounterContextProps = ObjectMounterContextProps<MarkerProps, google.maps.Marker>;
@@ -21,7 +25,7 @@ type MarkerMounterContextType = [
 ];
 
 const MarkerMounterContext = React.createContext<MarkerMounterContextType>([
-    { addObject: null, removeObject: null, map: null },
+    { addObject: null, removeObject: null, map: null, stateObject: { isUnmounted: false } },
     null,
 ]);
 
@@ -36,7 +40,8 @@ const useAddToObjectMounter = <ObjectTypeProps extends ObjectProps, GoogleMapsOb
     useEffect(() => {
         setMarker(objectMounterContext.addObject(props, props.id));
         return () => {
-            objectMounterContext.removeObject(props.id);
+            const { isUnmounted } = objectMounterContext.stateObject;
+            !isUnmounted && objectMounterContext.removeObject(props.id);
         };
     }, []);
     return marker;

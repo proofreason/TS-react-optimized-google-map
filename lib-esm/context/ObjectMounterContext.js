@@ -1,7 +1,7 @@
 import * as React from 'react';
 var useEffect = React.useEffect;
 var MarkerMounterContext = React.createContext([
-    { addObject: null, removeObject: null, map: null },
+    { addObject: null, removeObject: null, map: null, stateObject: { isUnmounted: false } },
     null,
 ]);
 var objectMounterReady = function (loaderContext) {
@@ -12,7 +12,8 @@ var useAddToObjectMounter = function (objectMounterContext, props) {
     useEffect(function () {
         setMarker(objectMounterContext.addObject(props, props.id));
         return function () {
-            objectMounterContext.removeObject(props.id);
+            var isUnmounted = objectMounterContext.stateObject.isUnmounted;
+            !isUnmounted && objectMounterContext.removeObject(props.id);
         };
     }, []);
     return marker;

@@ -7,7 +7,7 @@ import Marker, { MarkerProps } from './Marker';
 const { Children, useContext, useState } = React;
 
 interface MarkerBatchProps {
-    children: React.ComponentElement<MarkerProps, null>;
+    children: React.ComponentElement<MarkerProps, null>[];
 }
 
 const removeDeprecated = (
@@ -40,7 +40,7 @@ const addMarkersToMounter = (
 };
 
 const getPropertiesFromChildren = (
-    children: React.ComponentElement<MarkerProps, null>,
+    children: React.ComponentElement<MarkerProps, null>[],
 ): [MarkerProps[], MarkerListener[][], React.ReactNode[]] => {
     const markerProps: MarkerProps[] = [];
     const markerListenerFncs: MarkerListener[][] = [];

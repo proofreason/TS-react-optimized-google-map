@@ -8,6 +8,7 @@ import OptimizedMarkerClusterer from '@components/MarkerClusterer';
 import MapMounterContext from '@context/MapMounterContext';
 import { CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG } from '@develop_lib/constants';
 import * as React from 'react';
+import { MarkerBatch } from 'src';
 import MarkerDeployer from './MarkerDeployer';
 const { useState } = React;
 
@@ -41,7 +42,7 @@ const MapInitializer = () => {
                     <OptimizedMarkerClusterer
                         clusteringSettings={{
                             ignoreHidden: true,
-                            batchSize: 30000,
+                            batchSize: 5000,
                         }}
                     >
                         <MarkerDeployer display={displayMarkers} />
