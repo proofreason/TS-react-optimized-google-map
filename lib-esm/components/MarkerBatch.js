@@ -5,7 +5,8 @@ var Children = React.Children, useContext = React.useContext, useState = React.u
 var removeDeprecated = function (markersProps, listeners, mounterContext) {
     var mounter = mounterContext[0];
     markersProps.map(function (markerProps) {
-        mounter.removeObject(markerProps.id);
+        var isUnmounted = mounter.stateObject.isUnmounted;
+        !isUnmounted && mounter.removeObject(markerProps.id);
     });
     listeners.map(function (listener) {
         listener.remove();
@@ -37,15 +38,6 @@ var getPropertiesFromChildren = function (children) {
     });
     return [markerProps, markerListenerFncs, markersChildren];
 };
-var useCleanupOldMarkers = function (children, prevMarkerPropsState, prevListenersState, mounterContext) {
-    var prevMarkerProps = prevMarkerPropsState[0], setPrevMarkerProps = prevMarkerPropsState[1];
-    var prevListeners = prevListenersState[0], setPrevListeners = prevListenersState[1];
-    useEffect(function () {
-        return function () {
-            removeDeprecated(prevMarkerProps, prevListeners, mounterContext);
-        };
-    }, [prevMarkerProps]);
-};
 var useUpdateFromChildren = function (children, markersChildrenState, prevMarkerPropsState, prevListenersState, mounterContext) {
     useEffect(function () {
         var prevMarkerProps = prevMarkerPropsState[0], setPrevMarkerProps = prevMarkerPropsState[1];
@@ -65,6 +57,9 @@ var useUpdateFromChildren = function (children, markersChildrenState, prevMarker
         setMarkersChildren(newChildren);
         setPrevMarkerProps(markerProps);
         setPrevListeners(listeners);
+        return function () {
+            removeDeprecated(markerProps, prevListeners, mounterContext);
+        };
     }, [children]);
 };
 var MarkerBatch = function (_a) {
@@ -74,7 +69,6 @@ var MarkerBatch = function (_a) {
     var prevListenersState = useState([]);
     var childrenState = useState([]);
     var markersChildren = childrenState[0];
-    useCleanupOldMarkers(children, prevMarkerPropsState, prevListenersState, mounterContext);
     useUpdateFromChildren(children, childrenState, prevMarkerPropsState, prevListenersState, mounterContext);
     return React.createElement(React.Fragment, null, markersChildren);
 };

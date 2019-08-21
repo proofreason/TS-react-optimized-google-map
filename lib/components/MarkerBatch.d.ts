@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MarkerProps } from './Marker';
-declare type ChildrenType = React.ComponentElement<MarkerProps, null>[];
+declare type ChildrenType = React.ComponentElement<MarkerProps, null>[] | React.ComponentElement<MarkerProps, null>;
 interface MarkerBatchProps {
     children: ChildrenType;
 }

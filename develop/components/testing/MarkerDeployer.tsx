@@ -25,7 +25,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
     ] = useState(null);
     const [mapMounterContext, setMapMounterContex] = React.useContext(MapMounterContext);
     const [displayMarkers, setDisplayMarkers] = useState(true);
-    const numOfLocations = 3;
+    const numOfLocations = 3000;
     if (!locations) {
         setLocations(getRandomLocations(numOfLocations));
     }
@@ -127,10 +127,20 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
             return () => listener.remove();
         }
     }, [mapMounterContext.map, displayMarkers]);
+    const testPosition = getRandomLocations(1)[0];
     if (!display) {
         return <></>;
     }
-    return <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>;
+    return (
+        <>
+            <MarkerMounter>
+                <Marker id={0} markerOptions={{ position: testPosition }} />
+            </MarkerMounter>
+            <MarkerMounter>
+                <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>
+            </MarkerMounter>
+        </>
+    );
 };
 
 export default MarkerDeployer;

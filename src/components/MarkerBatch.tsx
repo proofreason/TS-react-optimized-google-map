@@ -6,7 +6,9 @@ import * as React from 'react';
 import Marker, { MarkerProps } from './Marker';
 const { Children, useContext, useState, useEffect } = React;
 
-type ChildrenType = React.ComponentElement<MarkerProps, null>[];
+type ChildrenType =
+    | React.ComponentElement<MarkerProps, null>[]
+    | React.ComponentElement<MarkerProps, null>;
 interface MarkerBatchProps {
     children: ChildrenType;
 }
@@ -30,7 +32,8 @@ const removeDeprecated = (
 ) => {
     const [mounter] = mounterContext;
     markersProps.map((markerProps) => {
-        mounter.removeObject(markerProps.id);
+        const { isUnmounted } = mounter.stateObject;
+        !isUnmounted && mounter.removeObject(markerProps.id);
     });
     listeners.map((listener) => {
         listener.remove();
@@ -53,7 +56,7 @@ const addMarkersToMounter = (
 };
 
 const getPropertiesFromChildren = (
-    children: React.ComponentElement<MarkerProps, null>[],
+    children: ChildrenType,
 ): [MarkerProps[], MarkerListener[][], React.ReactNode[]] => {
     const markerProps: MarkerProps[] = [];
     const markerListenerFncs: MarkerListener[][] = [];
@@ -69,22 +72,6 @@ const getPropertiesFromChildren = (
         markersChildren.push(markerChildren);
     });
     return [markerProps, markerListenerFncs, markersChildren];
-};
-
-const useCleanupOldMarkers = (
-    children: ChildrenType,
-    prevMarkerPropsState: PrevMarkerPropsState,
-    prevListenersState: PrevListenersState,
-    mounterContext: MarkerMounterContextType,
-) => {
-    const [prevMarkerProps, setPrevMarkerProps] = prevMarkerPropsState;
-    const [prevListeners, setPrevListeners] = prevListenersState;
-
-    useEffect(() => {
-        return () => {
-            removeDeprecated(prevMarkerProps, prevListeners, mounterContext);
-        };
-    }, [prevMarkerProps]);
 };
 
 const useUpdateFromChildren = (
@@ -116,6 +103,9 @@ const useUpdateFromChildren = (
         setMarkersChildren(newChildren);
         setPrevMarkerProps(markerProps);
         setPrevListeners(listeners);
+        return () => {
+            removeDeprecated(markerProps, prevListeners, mounterContext);
+        };
     }, [children]);
 };
 
@@ -126,7 +116,6 @@ const MarkerBatch = ({ children }: MarkerBatchProps) => {
     const childrenState: MarkersChildrenState = useState([]);
     const [markersChildren] = childrenState;
 
-    useCleanupOldMarkers(children, prevMarkerPropsState, prevListenersState, mounterContext);
     useUpdateFromChildren(
         children,
         childrenState,
