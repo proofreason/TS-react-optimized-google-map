@@ -98,6 +98,7 @@ const AsyncMarkerArray = (props: MarkerArrayProps = DEFAULT_MARKER_ARRAY_PROPS) 
         map: mapContext.map,
         addObject: addMarker(mapContext.map, batchSize),
         removeObject: removeMarker,
+        stateObject: { isUnmounted: false },
     });
     return (
         <AsyncMarkerArrayContext.Provider value={context}>

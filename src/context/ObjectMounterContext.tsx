@@ -6,22 +6,32 @@ interface ObjectProps {
     id: number;
 }
 
-// TODO: remove any
-interface ObjectMounterContextProps<ObjectPropsType, ReturnType> {
-    map: google.maps.Map;
-    addObject: (object: ObjectPropsType, id: number) => ReturnType;
-    removeObject: (id: number) => boolean;
+interface MutableStateObject<ObjectType> {
+    isUnmounted: boolean;
+    objects: ObjectType[];
 }
 
-type MarkerArrayContextProps = ObjectMounterContextProps<MarkerProps, google.maps.Marker>;
+interface ObjectMounterContextProps<ObjectPropsType, ReturnObjectType> {
+    map: google.maps.Map;
+    addObject: (object: ObjectPropsType, id: number) => ReturnObjectType;
+    removeObject: (id: number) => boolean;
+    stateObject: MutableStateObject<ReturnObjectType>;
+}
 
-type MarkerArrayContextType = [
-    MarkerArrayContextProps,
-    React.Dispatch<React.SetStateAction<MarkerArrayContextProps>>,
+type MarkerMounterContextProps = ObjectMounterContextProps<MarkerProps, google.maps.Marker>;
+
+type MarkerMounterContextType = [
+    MarkerMounterContextProps,
+    React.Dispatch<React.SetStateAction<MarkerMounterContextProps>>,
 ];
 
-const MarkerArrayContext = React.createContext<MarkerArrayContextType>([
-    { addObject: null, removeObject: null, map: null },
+const MarkerMounterContext = React.createContext<MarkerMounterContextType>([
+    {
+        addObject: null,
+        removeObject: null,
+        map: null,
+        stateObject: { isUnmounted: false, objects: [] },
+    },
     null,
 ]);
 
@@ -34,20 +44,28 @@ const useAddToObjectMounter = <ObjectTypeProps extends ObjectProps, GoogleMapsOb
 ) => {
     const [marker, setMarker] = React.useState(null);
     useEffect(() => {
+        if (
+            !objectMounterContext ||
+            !objectMounterContext.addObject ||
+            !objectMounterContext.removeObject
+        ) {
+            return;
+        }
         setMarker(objectMounterContext.addObject(props, props.id));
         return () => {
-            objectMounterContext.removeObject(props.id);
+            const { isUnmounted } = objectMounterContext.stateObject;
+            !isUnmounted && objectMounterContext.removeObject(props.id);
         };
-    }, []);
+    }, [objectMounterContext]);
     return marker;
 };
 
 export {
     ObjectMounterContextProps,
     ObjectProps,
-    MarkerArrayContextProps,
-    MarkerArrayContextType,
-    MarkerArrayContext,
+    MarkerMounterContextProps,
+    MarkerMounterContextType,
+    MarkerMounterContext,
     useAddToObjectMounter,
     objectMounterReady,
 };

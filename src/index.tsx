@@ -1,3 +1,5 @@
+export * from './components/MarkerBatch';
+export { default as MarkerBatch } from './components/MarkerBatch';
 export * from './components/GoogleMapsMounter';
 export { default as GoogleMapsMounter } from './components/GoogleMapsMounter';
 export * from './components/GoogleScriptMounter';
@@ -20,6 +22,6 @@ export * from './context/MarkerClustererContext';
 export * from './context/ObjectMounterContext';
 export * from './context/WithSelectedContext';
 export { default as WithSelectedContext } from './context/WithSelectedContext';
-export * from './components/googleMapsMounter/MarkerArray';
-export { default as MarkerArray } from './components/googleMapsMounter/MarkerArray';
+export * from './components/googleMapsMounter/MarkerMounter';
+export { default as MarkerMounter } from './components/googleMapsMounter/MarkerMounter';
 export * from './lib/Utils';

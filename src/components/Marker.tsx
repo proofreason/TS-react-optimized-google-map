@@ -2,20 +2,16 @@ import AsyncMarkerArrayContext, {
     useAddToAsyncMounter,
     asyncMounterReady,
 } from '@context/AsyncMounterContext';
-import MapMounterContext, {
-    MapMounterContextType,
-    MapMounterContextProps,
-} from '@context/MapMounterContext';
 import {
     useAddToObjectMounter,
-    MarkerArrayContext,
+    MarkerMounterContext,
     objectMounterReady,
 } from '@context/ObjectMounterContext';
+import { addListenersToMarker } from '@lib/MapUtils';
+import { MarkerListenerFunction, MarkerListener } from '@src_types/mapTypes';
 import * as React from 'react';
 
 const { useContext, useEffect } = React;
-
-type MarkerListenerFunction = (marker: google.maps.Marker, event: MouseEvent) => void;
 
 interface Optimizations {
     listenersChanged?: boolean;
@@ -44,53 +40,31 @@ const noMounterFound = () => {
 };
 
 const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
-    const [mapContext] = useContext(MapMounterContext);
-    const [asyncMarkerArrayContext] = useContext(AsyncMarkerArrayContext);
-    const [markerArrayContext] = useContext(MarkerArrayContext);
-
-    // async loading has preccedence
-    if (objectMounterReady(asyncMarkerArrayContext)) {
-        return useAddToAsyncMounter(asyncMarkerArrayContext, props);
+    const [markerArrayContext] = useContext(MarkerMounterContext);
+    if (!markerArrayContext) {
+        noMounterFound();
     }
-
-    if (objectMounterReady(markerArrayContext)) {
-        return useAddToObjectMounter(markerArrayContext, props);
-    }
-
-    noMounterFound();
+    return useAddToObjectMounter(markerArrayContext, props);
 };
-
-interface MarkerListener {
-    eventName: google.maps.MarkerMouseEventNames;
-    listener: MarkerListenerFunction;
-}
 
 const useAddListenersToMarker = (
     marker: google.maps.Marker,
     listeners: MarkerListener[],
     changFlagged: boolean = null,
 ) => {
+    const [markerArrayContext] = useContext(MarkerMounterContext);
     const activeListeners: google.maps.MapsEventListener[] = [];
     const markerValid = marker !== null || undefined;
-    const toWatch = changFlagged === null ? [markerValid, listeners] : [markerValid, changFlagged];
     useEffect(() => {
-        if (markerValid) {
-            listeners.map(({ eventName, listener }) => {
-                if (!listener) {
-                    return null;
-                }
-                const enhancedListener = (event: MouseEvent) => listener(marker, event);
-                // tslint:disable-next-line
-                const addedListener = marker.addListener(eventName, enhancedListener);
-                activeListeners.push(addedListener);
-            });
+        if (markerValid && objectMounterReady(markerArrayContext)) {
+            activeListeners.concat(addListenersToMarker(listeners, marker));
         }
         return () => {
             activeListeners.map((listener) => {
                 listener.remove();
             });
         };
-    }, toWatch);
+    }, [markerValid, changFlagged, markerArrayContext]);
 };
 
 const useUpdateOnPropsChange = (
@@ -105,11 +79,6 @@ const useUpdateOnPropsChange = (
 };
 
 const Marker = (props: MarkerProps) => {
-    const { position } = props.markerOptions;
-    const boxPosition =
-        position instanceof google.maps.LatLng
-            ? position
-            : new google.maps.LatLng(position.lat, position.lng);
     return (
         <MarkerInner {...props} key={props.id}>
             {props.children}

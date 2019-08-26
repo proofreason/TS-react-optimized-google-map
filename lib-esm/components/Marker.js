@@ -9,9 +9,8 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import AsyncMarkerArrayContext, { useAddToAsyncMounter, } from "../context/AsyncMounterContext";
-import MapMounterContext from "../context/MapMounterContext";
-import { useAddToObjectMounter, MarkerArrayContext, objectMounterReady, } from "../context/ObjectMounterContext";
+import { useAddToObjectMounter, MarkerMounterContext, objectMounterReady, } from "../context/ObjectMounterContext";
+import { addListenersToMarker } from "../lib/MapUtils";
 import * as React from 'react';
 var useContext = React.useContext, useEffect = React.useEffect;
 var noMounterFound = function () {
@@ -19,42 +18,27 @@ var noMounterFound = function () {
     return false;
 };
 var useAddMarkerToMap = function (props) {
-    var mapContext = useContext(MapMounterContext)[0];
-    var asyncMarkerArrayContext = useContext(AsyncMarkerArrayContext)[0];
-    var markerArrayContext = useContext(MarkerArrayContext)[0];
-    // async loading has preccedence
-    if (objectMounterReady(asyncMarkerArrayContext)) {
-        return useAddToAsyncMounter(asyncMarkerArrayContext, props);
+    var markerArrayContext = useContext(MarkerMounterContext)[0];
+    if (!markerArrayContext) {
+        noMounterFound();
     }
-    if (objectMounterReady(markerArrayContext)) {
-        return useAddToObjectMounter(markerArrayContext, props);
-    }
-    noMounterFound();
+    return useAddToObjectMounter(markerArrayContext, props);
 };
 var useAddListenersToMarker = function (marker, listeners, changFlagged) {
     if (changFlagged === void 0) { changFlagged = null; }
+    var markerArrayContext = useContext(MarkerMounterContext)[0];
     var activeListeners = [];
     var markerValid = marker !== null || undefined;
-    var toWatch = changFlagged === null ? [markerValid, listeners] : [markerValid, changFlagged];
     useEffect(function () {
-        if (markerValid) {
-            listeners.map(function (_a) {
-                var eventName = _a.eventName, listener = _a.listener;
-                if (!listener) {
-                    return null;
-                }
-                var enhancedListener = function (event) { return listener(marker, event); };
-                // tslint:disable-next-line
-                var addedListener = marker.addListener(eventName, enhancedListener);
-                activeListeners.push(addedListener);
-            });
+        if (markerValid && objectMounterReady(markerArrayContext)) {
+            activeListeners.concat(addListenersToMarker(listeners, marker));
         }
         return function () {
             activeListeners.map(function (listener) {
                 listener.remove();
             });
         };
-    }, toWatch);
+    }, [markerValid, changFlagged, markerArrayContext]);
 };
 var useUpdateOnPropsChange = function (markerOptions, marker) {
     useEffect(function () {
@@ -64,10 +48,6 @@ var useUpdateOnPropsChange = function (markerOptions, marker) {
     }, [markerOptions, marker]);
 };
 var Marker = function (props) {
-    var position = props.markerOptions.position;
-    var boxPosition = position instanceof google.maps.LatLng
-        ? position
-        : new google.maps.LatLng(position.lat, position.lng);
     return (React.createElement(MarkerInner, __assign({}, props, { key: props.id }), props.children));
 };
 // change of id will generate new key and unmount the old one -> new id === new marker

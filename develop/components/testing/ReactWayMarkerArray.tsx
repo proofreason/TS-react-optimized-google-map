@@ -1,12 +1,14 @@
 import GoogleMapsMounter from '@components/GoogleMapsMounter';
-import MarkerArray from '@components/googleMapsMounter/MarkerArray';
+import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
 import GoogleScriptMounter from '@components/GoogleScriptMounter';
 import InfoBox from '@components/InfoBox';
 import MapControll from '@components/MapControll';
 import Marker from '@components/Marker';
+import MarkerBatch from '@components/MarkerBatch';
 import OptimizedMarkerClusterer from '@components/MarkerClusterer';
 import MapMounterContext from '@context/MapMounterContext';
 import { CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG } from '@develop_lib/constants';
+import { getRandomLocations } from '@develop_lib/markerUtils';
 import * as React from 'react';
 import MarkerDeployer from './MarkerDeployer';
 const { useState } = React;
@@ -29,6 +31,8 @@ const MapInitializer = () => {
     const toggleDisplayMarkers = () => {
         displayMarkers ? setDisplayMarkers(false) : setDisplayMarkers(true);
     };
+    const testPosition = getRandomLocations(1)[0];
+    const testingMarkerId = 11;
 
     return (
         <GoogleScriptMounter key={0} scriptUrl={GOOGLE_API_URL} onScriptLoad={setScriptIsLoaded}>
@@ -42,21 +46,18 @@ const MapInitializer = () => {
                     <OptimizedMarkerClusterer
                         clusteringSettings={{
                             ignoreHidden: true,
-                            averageCenter: true,
-                            enableRetinaIcons: false,
+                            batchSize: 5000,
                         }}
                     >
                         <MarkerDeployer display={displayMarkers} />
+                        <MarkerBatch>
+                            <Marker
+                                id={testingMarkerId}
+                                markerOptions={{ position: testPosition }}
+                            />
+                        </MarkerBatch>
                     </OptimizedMarkerClusterer>
-                    <InfoBox
-                        closeBoxURL=""
-                        boxStyle={{ color: 'blue' }}
-                        boxClass={'my awesome class'}
-                        open={true}
-                        position={new google.maps.LatLng(CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG)}
-                    >
-                        <div style={{ backgroundColor: 'red' }}>My awesome label</div>
-                    </InfoBox>
+
                     <MapControll
                         position={google.maps.ControlPosition.LEFT_CENTER}
                         offsets={{ topOffset: 25 }}

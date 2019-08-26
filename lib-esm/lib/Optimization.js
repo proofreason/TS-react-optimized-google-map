@@ -9,17 +9,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 import Marker from "../components/Marker";
 import * as React from 'react';
 import { getOwnKeysOfObject } from './Utils';
@@ -37,10 +26,8 @@ var updateMarkerCache = function (markersCache, id, props, immutable, forceUpdat
     if (forceUpdate === void 0) { forceUpdate = false; }
     var markersArray = markersCache[0], setMarkerArray = markersCache[1];
     if (markersArray[id]) {
-        var onClick = props.onClick, onMouseEnter = props.onMouseEnter, onMouseOut = props.onMouseOut, optimizations = props.optimizations, toCompare_1 = __rest(props, ["onClick", "onMouseEnter", "onMouseOut", "optimizations"]);
-        var _a = markersArray[id].props, ra = _a.onClick, rb = _a.onMouseEnter, rc = _a.onMouseOut, rd = _a.optimizations, 
-        // tslint:disable-next-line
-        toCompareOld_1 = __rest(_a, ["onClick", "onMouseEnter", "onMouseOut", "optimizations"]);
+        var toCompare_1 = props.markerOptions;
+        var toCompareOld_1 = markersArray[id].props.markerOptions;
         var ownKeysOld = getOwnKeysOfObject(toCompareOld_1);
         var ownKeysNew = getOwnKeysOfObject(toCompare_1);
         var newHasSamePropsAsOld = ownKeysOld.every(function (key) { return toCompare_1.hasOwnProperty(key) && toCompare_1[key] === toCompareOld_1[key]; });
@@ -69,18 +56,20 @@ var hideOutOfFovMarkers = function (markers, map) {
         return marker;
     });
 };
-var useHideOutOfFovMarkers = function (markers, map, callback) {
+var useHideOutOfFovMarkers = function (markers, map, callback, active) {
+    if (active === void 0) { active = true; }
     var realodOnChange = function () {
         hideOutOfFovMarkers(markers, map);
         callback && callback();
     };
     useEffect(function () {
-        realodOnChange();
-        var listener = map.addListener('idle', function () {
-            realodOnChange();
-        });
-        return function () { return listener.remove(); };
-    }, [markers]);
+        active && realodOnChange();
+        var listener = active &&
+            map.addListener('idle', function () {
+                realodOnChange();
+            });
+        return function () { return listener && listener.remove(); };
+    }, [markers, active]);
 };
 export { useMarkerCache, updateMarkerCache, useHideOutOfFovMarkers };
 //# sourceMappingURL=Optimization.js.map
