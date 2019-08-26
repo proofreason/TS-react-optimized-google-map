@@ -55,7 +55,6 @@ var OptimizedMarkerClusterer = function (props) {
     };
     var getMountedMarkersAndRefresh = function (markers) {
         onMountedMarkersChange && onMountedMarkersChange(markers);
-        // TODO: remove if everything works contextState.clusterer.repaint();
     };
     return (contextState.clusterer && (React.createElement(MarkerClustererContext.Provider, { value: context },
         React.createElement(MarkerMounter, { onMountedMarkersChange: getMountedMarkersAndRefresh }, children))));

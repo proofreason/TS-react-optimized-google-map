@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { useAddToObjectMounter, MarkerMounterContext, } from "../context/ObjectMounterContext";
+import { useAddToObjectMounter, MarkerMounterContext, objectMounterReady, } from "../context/ObjectMounterContext";
 import { addListenersToMarker } from "../lib/MapUtils";
 import * as React from 'react';
 var useContext = React.useContext, useEffect = React.useEffect;
@@ -30,7 +30,7 @@ var useAddListenersToMarker = function (marker, listeners, changFlagged) {
     var activeListeners = [];
     var markerValid = marker !== null || undefined;
     useEffect(function () {
-        if (markerValid && markerArrayContext.addObject && markerArrayContext.removeObject) {
+        if (markerValid && objectMounterReady(markerArrayContext)) {
             activeListeners.concat(addListenersToMarker(listeners, marker));
         }
         return function () {

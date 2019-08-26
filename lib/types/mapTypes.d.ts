@@ -3,5 +3,5 @@ interface MarkerListener {
     eventName: google.maps.MarkerMouseEventNames;
     listener: MarkerListenerFunction;
 }
-declare type MarkerListenerFunction = (marker: google.maps.Marker, event: MouseEvent) => void;
+declare type MarkerListenerFunction = (marker: google.maps.Marker, event: google.maps.MouseEvent) => void;
 export { MarkerListener, MarkerListenerFunction };

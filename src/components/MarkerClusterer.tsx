@@ -76,7 +76,6 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
 
     const getMountedMarkersAndRefresh = (markers: google.maps.Marker[]) => {
         onMountedMarkersChange && onMountedMarkersChange(markers);
-        // TODO: remove if everything works contextState.clusterer.repaint();
     };
 
     return (

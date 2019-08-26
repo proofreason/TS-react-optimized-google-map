@@ -16,8 +16,9 @@ const addListenersToMarker = (listeners: MarkerListener[], marker: google.maps.M
         if (!listener) {
             return null;
         }
-        const enhancedListener = (event: MouseEvent) => listener(marker, event);
-        // tslint:disable-next-line
+        const enhancedListener = (event: google.maps.MouseEvent) => {
+            listener(marker, event);
+        };
         const addedListener = marker.addListener(eventName, enhancedListener);
         activeListeners.push(addedListener);
     });

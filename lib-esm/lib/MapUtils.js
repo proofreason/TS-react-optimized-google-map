@@ -14,8 +14,9 @@ var addListenersToMarker = function (listeners, marker) {
         if (!listener) {
             return null;
         }
-        var enhancedListener = function (event) { return listener(marker, event); };
-        // tslint:disable-next-line
+        var enhancedListener = function (event) {
+            listener(marker, event);
+        };
         var addedListener = marker.addListener(eventName, enhancedListener);
         activeListeners.push(addedListener);
     });

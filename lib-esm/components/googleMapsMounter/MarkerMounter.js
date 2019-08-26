@@ -57,13 +57,19 @@ var removeMarkersMarkedToBeRemoved = function (markers, clusterer, map) {
     var markersToRemove = markers.filter(function (marker) { return marker.isToBeRemoved; });
     mutableRemoveMarkersFrom(markersToRemove, clusterer, markers);
 };
+var filterAlreadyPresentIn = function (markers, inArray) {
+    return markers.filter(function (marker) {
+        return !markerIsIn(marker, inArray);
+    });
+};
+var markerIsIn = function (marker, inArray) {
+    return inArray.find(function (inMarker) { return inMarker.id === marker.id; });
+};
 var addMarkersToMap = function (markers, clusterer, map) {
     if (clusterer) {
-        var clustererMarkers_1 = clusterer.getMarkers().slice();
-        var toAdd = markers.filter(function (marker) {
-            return !clustererMarkers_1.find(function (clustererMarker) { return clustererMarker.id === marker.id; });
-        });
-        clusterer.addMarkers(toAdd, true);
+        var clustererMarkers = clusterer.getMarkers().slice();
+        var toAddMarkers = filterAlreadyPresentIn(markers, clustererMarkers);
+        clusterer.addMarkers(toAddMarkers, true);
         return;
     }
     markers.map(function (marker) {

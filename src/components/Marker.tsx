@@ -41,7 +41,6 @@ const noMounterFound = () => {
 
 const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
     const [markerArrayContext] = useContext(MarkerMounterContext);
-
     if (!markerArrayContext) {
         noMounterFound();
     }
@@ -57,7 +56,7 @@ const useAddListenersToMarker = (
     const activeListeners: google.maps.MapsEventListener[] = [];
     const markerValid = marker !== null || undefined;
     useEffect(() => {
-        if (markerValid && markerArrayContext.addObject && markerArrayContext.removeObject) {
+        if (markerValid && objectMounterReady(markerArrayContext)) {
             activeListeners.concat(addListenersToMarker(listeners, marker));
         }
         return () => {
