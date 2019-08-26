@@ -9,8 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import AsyncMarkerArrayContext from "../context/AsyncMounterContext";
-import { useAddToObjectMounter, MarkerMounterContext, objectMounterReady, } from "../context/ObjectMounterContext";
+import { useAddToObjectMounter, MarkerMounterContext, } from "../context/ObjectMounterContext";
 import { addListenersToMarker } from "../lib/MapUtils";
 import * as React from 'react';
 var useContext = React.useContext, useEffect = React.useEffect;
@@ -19,20 +18,19 @@ var noMounterFound = function () {
     return false;
 };
 var useAddMarkerToMap = function (props) {
-    var asyncMarkerArrayContext = useContext(AsyncMarkerArrayContext)[0];
     var markerArrayContext = useContext(MarkerMounterContext)[0];
-    if (objectMounterReady(markerArrayContext)) {
-        return useAddToObjectMounter(markerArrayContext, props);
+    if (!markerArrayContext) {
+        noMounterFound();
     }
-    noMounterFound();
+    return useAddToObjectMounter(markerArrayContext, props);
 };
 var useAddListenersToMarker = function (marker, listeners, changFlagged) {
     if (changFlagged === void 0) { changFlagged = null; }
+    var markerArrayContext = useContext(MarkerMounterContext)[0];
     var activeListeners = [];
     var markerValid = marker !== null || undefined;
-    var toWatch = changFlagged === null ? [markerValid, listeners] : [markerValid, changFlagged];
     useEffect(function () {
-        if (markerValid) {
+        if (markerValid && markerArrayContext.addObject && markerArrayContext.removeObject) {
             activeListeners.concat(addListenersToMarker(listeners, marker));
         }
         return function () {
@@ -40,7 +38,7 @@ var useAddListenersToMarker = function (marker, listeners, changFlagged) {
                 listener.remove();
             });
         };
-    }, toWatch);
+    }, [markerValid, changFlagged, markerArrayContext]);
 };
 var useUpdateOnPropsChange = function (markerOptions, marker) {
     useEffect(function () {

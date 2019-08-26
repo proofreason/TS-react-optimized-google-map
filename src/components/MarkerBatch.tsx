@@ -81,17 +81,17 @@ const useUpdateFromChildren = (
     prevListenersState: PrevListenersState,
     mounterContext: MarkerMounterContextType,
 ) => {
+    const [mounterContextState] = mounterContext;
     useEffect(() => {
         const [prevMarkerProps, setPrevMarkerProps] = prevMarkerPropsState;
         const [prevListeners, setPrevListeners] = prevListenersState;
         const [markersChildren, setMarkersChildren] = markersChildrenState;
-        if (!mounterContext) {
-            return;
-        }
-        // notify cleanup that change happened
-        setPrevMarkerProps([]);
-        setPrevListeners([]);
-        if (!children) {
+        if (
+            !children ||
+            !mounterContext ||
+            !mounterContextState.addObject ||
+            !mounterContextState.removeObject
+        ) {
             return;
         }
         const [markerProps, markerListenerFncs, newChildren] = getPropertiesFromChildren(children);
@@ -106,7 +106,7 @@ const useUpdateFromChildren = (
         return () => {
             removeDeprecated(markerProps, prevListeners, mounterContext);
         };
-    }, [children]);
+    }, [children, mounterContextState]);
 };
 
 const MarkerBatch = ({ children }: MarkerBatchProps) => {

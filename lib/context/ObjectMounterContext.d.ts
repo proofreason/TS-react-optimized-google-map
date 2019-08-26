@@ -4,14 +4,15 @@ import * as React from 'react';
 interface ObjectProps {
     id: number;
 }
-interface UnmountedStateObject {
+interface MutableStateObject<ObjectType> {
     isUnmounted: boolean;
+    objects: ObjectType[];
 }
-interface ObjectMounterContextProps<ObjectPropsType, ReturnType> {
+interface ObjectMounterContextProps<ObjectPropsType, ReturnObjectType> {
     map: google.maps.Map;
-    addObject: (object: ObjectPropsType, id: number) => ReturnType;
+    addObject: (object: ObjectPropsType, id: number) => ReturnObjectType;
     removeObject: (id: number) => boolean;
-    stateObject: UnmountedStateObject;
+    stateObject: MutableStateObject<ReturnObjectType>;
 }
 declare type MarkerMounterContextProps = ObjectMounterContextProps<MarkerProps, google.maps.Marker>;
 declare type MarkerMounterContextType = [MarkerMounterContextProps, React.Dispatch<React.SetStateAction<MarkerMounterContextProps>>];

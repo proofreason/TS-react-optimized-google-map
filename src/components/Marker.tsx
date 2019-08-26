@@ -40,14 +40,12 @@ const noMounterFound = () => {
 };
 
 const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
-    const [asyncMarkerArrayContext] = useContext(AsyncMarkerArrayContext);
     const [markerArrayContext] = useContext(MarkerMounterContext);
 
-    if (objectMounterReady(markerArrayContext)) {
-        return useAddToObjectMounter(markerArrayContext, props);
+    if (!markerArrayContext) {
+        noMounterFound();
     }
-
-    noMounterFound();
+    return useAddToObjectMounter(markerArrayContext, props);
 };
 
 const useAddListenersToMarker = (
@@ -55,11 +53,11 @@ const useAddListenersToMarker = (
     listeners: MarkerListener[],
     changFlagged: boolean = null,
 ) => {
+    const [markerArrayContext] = useContext(MarkerMounterContext);
     const activeListeners: google.maps.MapsEventListener[] = [];
     const markerValid = marker !== null || undefined;
-    const toWatch = changFlagged === null ? [markerValid, listeners] : [markerValid, changFlagged];
     useEffect(() => {
-        if (markerValid) {
+        if (markerValid && markerArrayContext.addObject && markerArrayContext.removeObject) {
             activeListeners.concat(addListenersToMarker(listeners, marker));
         }
         return () => {
@@ -67,7 +65,7 @@ const useAddListenersToMarker = (
                 listener.remove();
             });
         };
-    }, toWatch);
+    }, [markerValid, changFlagged, markerArrayContext]);
 };
 
 const useUpdateOnPropsChange = (

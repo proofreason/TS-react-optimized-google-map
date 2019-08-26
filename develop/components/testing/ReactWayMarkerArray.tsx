@@ -4,11 +4,12 @@ import GoogleScriptMounter from '@components/GoogleScriptMounter';
 import InfoBox from '@components/InfoBox';
 import MapControll from '@components/MapControll';
 import Marker from '@components/Marker';
+import MarkerBatch from '@components/MarkerBatch';
 import OptimizedMarkerClusterer from '@components/MarkerClusterer';
 import MapMounterContext from '@context/MapMounterContext';
 import { CZECH_REPUBLIC_LAT, CZECH_REPUBLIC_LONG } from '@develop_lib/constants';
+import { getRandomLocations } from '@develop_lib/markerUtils';
 import * as React from 'react';
-import { MarkerBatch } from 'src';
 import MarkerDeployer from './MarkerDeployer';
 const { useState } = React;
 
@@ -30,6 +31,9 @@ const MapInitializer = () => {
     const toggleDisplayMarkers = () => {
         displayMarkers ? setDisplayMarkers(false) : setDisplayMarkers(true);
     };
+    const testPosition = getRandomLocations(1)[0];
+    const testingMarkerId = 11;
+
     return (
         <GoogleScriptMounter key={0} scriptUrl={GOOGLE_API_URL} onScriptLoad={setScriptIsLoaded}>
             <div>Script is {isScriptLoaded ? 'loaded' : 'not loaded'}</div>
@@ -46,6 +50,12 @@ const MapInitializer = () => {
                         }}
                     >
                         <MarkerDeployer display={displayMarkers} />
+                        <MarkerBatch>
+                            <Marker
+                                id={testingMarkerId}
+                                markerOptions={{ position: testPosition }}
+                            />
+                        </MarkerBatch>
                     </OptimizedMarkerClusterer>
 
                     <MapControll

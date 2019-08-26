@@ -1,7 +1,12 @@
 import * as React from 'react';
 var useEffect = React.useEffect;
 var AsyncMarkerArrayContext = React.createContext([
-    { addObject: null, removeObject: null, map: null, stateObject: { isUnmounted: false } },
+    {
+        addObject: null,
+        removeObject: null,
+        map: null,
+        stateObject: { isUnmounted: false, objects: [] },
+    },
     null,
 ]);
 var asyncMounterReady = function (asyncMounterContext) {
