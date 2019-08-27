@@ -46,14 +46,14 @@ var OptimizedMarkerClusterer = function (props) {
         return addListener(contextState.clusterer, action, toCall);
     };
     React.useEffect(function () {
-        var customOnClickFunction = currentProps.customOnClickFunction, onClickExtender = currentProps.onClickExtender, zoomOnClick = currentProps.zoomOnClick;
+        var customOnClickFunction = currentProps.customOnClickFunction, onClickExtender = currentProps.onClickExtender, zoomOnClick = currentProps.zoomOnClick, maxZoom = currentProps.maxZoom;
         if (!contextState.clusterer || zoomOnClick === true) {
             return;
         }
         if (customOnClickFunction) {
             var clickWithExtender = function (cluster) {
-                onClickExtender(cluster);
-                customOnClickFunction(cluster);
+                onClickExtender(cluster, maxZoom);
+                customOnClickFunction(cluster, maxZoom);
             };
             var customClusterClick_1 = addListenerToClusterer(clickWithExtender);
             return function () { return google.maps.event.removeListener(customClusterClick_1); };
@@ -62,8 +62,8 @@ var OptimizedMarkerClusterer = function (props) {
         return function () { return google.maps.event.removeListener(clusterClick); };
     }, [contextState.clusterer]);
     var handleClusterClick = function (cluster) {
-        var onClickExtender = props.clusteringSettings.onClickExtender;
-        onClickExtender && currentProps.onClickExtender(cluster);
+        var onClickExtender = currentProps.onClickExtender, maxZoom = currentProps.maxZoom;
+        onClickExtender && currentProps.onClickExtender(cluster, maxZoom);
         var ClusterMap = cluster.getMap();
         var padding = 100;
         if (ClusterMap.getZoom() <= contextState.clusterer.getMaxZoom()) {
