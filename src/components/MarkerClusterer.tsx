@@ -22,8 +22,8 @@ interface OptimizedClustererProps<MarkerType extends google.maps.Marker = google
  */
 interface ClusteringSettings<MarkerType extends google.maps.Marker = google.maps.Marker>
     extends MarkerClustererOptions {
-    onClickExtender?: (cluster: Cluster, maxZoom?: number) => void;
-    customOnClickFunction?: (cluster: Cluster, maxZoom?: number) => void;
+    onClickExtender?: (cluster: Cluster) => void;
+    customOnClickFunction?: (cluster: Cluster) => void;
 }
 
 const INITIAL_STATE: OptimizedMarkerClustererState = {
@@ -65,14 +65,14 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
     };
 
     React.useEffect(() => {
-        const { customOnClickFunction, onClickExtender, zoomOnClick, maxZoom } = currentProps;
+        const { customOnClickFunction, onClickExtender, zoomOnClick } = currentProps;
         if (!contextState.clusterer || zoomOnClick === true) {
             return;
         }
         if (customOnClickFunction) {
             const clickWithExtender = (cluster: Cluster) => {
-                onClickExtender(cluster, maxZoom);
-                customOnClickFunction(cluster, maxZoom);
+                onClickExtender && onClickExtender(cluster);
+                customOnClickFunction(cluster);
             };
             const customClusterClick = addListenerToClusterer(clickWithExtender);
             return () => google.maps.event.removeListener(customClusterClick);
@@ -82,8 +82,8 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
     }, [contextState.clusterer]);
 
     const handleClusterClick = (cluster: Cluster) => {
-        const { onClickExtender, maxZoom } = currentProps;
-        onClickExtender && currentProps.onClickExtender(cluster, maxZoom);
+        const { onClickExtender } = props.clusteringSettings;
+        onClickExtender && currentProps.onClickExtender(cluster);
         const ClusterMap = cluster.getMap();
         const padding = 100;
         if (ClusterMap.getZoom() <= contextState.clusterer.getMaxZoom()) {
