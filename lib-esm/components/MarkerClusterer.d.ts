@@ -6,8 +6,12 @@ interface OptimizedClustererProps<MarkerType extends google.maps.Marker = google
     clusteringSettings?: ClusteringSettings<MarkerType>;
     onMountedMarkersChange?: (marksers: MarkerType[]) => void;
 }
+/**
+ * Functions cannot be changed after inicialization for now!
+ */
 interface ClusteringSettings<MarkerType extends google.maps.Marker = google.maps.Marker> extends MarkerClustererOptions {
-    onClickExtender?: (markersUnderCluster?: MarkerType[]) => void;
+    onClickExtender?: (cluster: Cluster) => void;
+    customOnClickFunction?: (cluster: Cluster) => void;
 }
 declare const OptimizedMarkerClusterer: (props: OptimizedClustererProps<google.maps.Marker>) => JSX.Element;
 export default OptimizedMarkerClusterer;

@@ -18,6 +18,10 @@ var INITIAL_STATE = {
     context: [{ clusterer: null }, null],
 };
 var BUILDINGS_VISIBLE_TRESHOLD_ZOOM = 15;
+/**
+ * If zoomOnClick is enabled, the default clusterer behavior will be used
+ * no custom function will be registered for onClick even onClickExtenderWillNotWork
+ */
 var defaultClustererOptions = {
     maxZoom: BUILDINGS_VISIBLE_TRESHOLD_ZOOM,
     averageCenter: true,
@@ -31,19 +35,35 @@ var OptimizedMarkerClusterer = function (props) {
     var contextState = context[0], setContextState = context[1];
     var _a = React.useContext(MapMounterContext), mapMounterContext = _a[0], setMapMounterContext = _a[1];
     var allMakers = contextState.clusterer ? contextState.clusterer.getMarkers() : [];
+    var currentProps = __assign({}, defaultClustererOptions, clusteringSettings);
     React.useEffect(function () {
-        var clusterer = new MarkerClusterer(mapMounterContext.map, [], __assign({}, defaultClustererOptions, clusteringSettings));
+        var clusterer = new MarkerClusterer(mapMounterContext.map, [], currentProps);
         setContextState({ clusterer: clusterer });
     }, []);
+    var addListenerToClusterer = function (toCall, action) {
+        if (action === void 0) { action = 'clusterclick'; }
+        var addListener = google.maps.event.addListener;
+        return addListener(contextState.clusterer, action, toCall);
+    };
     React.useEffect(function () {
-        if (contextState.clusterer) {
-            var clusterClick_1 = google.maps.event.addListener(contextState.clusterer, 'clusterclick', handleClusterClick);
-            return function () { return google.maps.event.removeListener(clusterClick_1); };
+        var customOnClickFunction = currentProps.customOnClickFunction, onClickExtender = currentProps.onClickExtender, zoomOnClick = currentProps.zoomOnClick;
+        if (!contextState.clusterer || zoomOnClick === true) {
+            return;
         }
+        if (customOnClickFunction) {
+            var clickWithExtender = function (cluster) {
+                onClickExtender(cluster);
+                customOnClickFunction(cluster);
+            };
+            var customClusterClick_1 = addListenerToClusterer(clickWithExtender);
+            return function () { return google.maps.event.removeListener(customClusterClick_1); };
+        }
+        var clusterClick = addListenerToClusterer(handleClusterClick);
+        return function () { return google.maps.event.removeListener(clusterClick); };
     }, [contextState.clusterer]);
     var handleClusterClick = function (cluster) {
         var onClickExtender = props.clusteringSettings.onClickExtender;
-        onClickExtender && onClickExtender(cluster.getMarkers());
+        onClickExtender && currentProps.onClickExtender(cluster);
         var ClusterMap = cluster.getMap();
         var padding = 100;
         if (ClusterMap.getZoom() <= contextState.clusterer.getMaxZoom()) {

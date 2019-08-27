@@ -25,7 +25,7 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
     ] = useState(null);
     const [mapMounterContext, setMapMounterContex] = React.useContext(MapMounterContext);
     const [displayMarkers, setDisplayMarkers] = useState(true);
-    const numOfLocations = 3;
+    const numOfLocations = 30;
     if (!locations) {
         setLocations(getRandomLocations(numOfLocations));
     }
