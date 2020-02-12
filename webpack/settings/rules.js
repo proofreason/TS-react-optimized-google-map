@@ -45,4 +45,5 @@ const imageLoader = {
 module.exports = {
     tsxLoader,
     imageLoader,
+    tstLoader
 };

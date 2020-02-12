@@ -1,5 +1,8 @@
 {
     "compilerOptions": {
+        // need this for jest processing js files with ts-jest
+        "allowJs": true,
+        "esModuleInterop": true,
         "moduleResolution": "node",
         "module": "commonjs",
         "noImplicitAny": true,

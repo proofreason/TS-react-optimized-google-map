@@ -11,7 +11,8 @@
     "build": "npm run clean & ttsc -p ./tsconfig.prod.json & ttsc -p ./tsconfig.prod.json -m es6 --outDir lib-esm",
     "build-all": "npm run build & npm run prod",
     "update:packages": "node wipe-dependencies.js && rm -rf node_modules && npm update --save-dev && npm update --save",
-    "tslint-fix": "tslint --fix -c ./tslint.json '{src,develop}/**/*{.ts,.tsx}'"
+    "tslint-fix": "tslint --fix -c ./tslint.json '{src,develop}/**/*{.ts,.tsx}'",
+    "test": "jest --no-cache --config __jest__/jest.config.js"
   },
   "repository": {
     "type": "git",
@@ -32,11 +33,15 @@
   "devDependencies": {
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
+    "@types/enzyme": "^3.10.5",
+    "@types/jest": "^25.1.2",
     "@zerollup/ts-transform-paths": "^1.7.11",
     "awesome-typescript-loader": "^5.2.1",
     "babel-jest": "^25.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "dotenv-webpack": "^1.7.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
     "file-loader": "^5.0.2",
     "filemanager-webpack-plugin": "^2.0.5",
     "html-webpack-plugin": "^3.2.0",
@@ -73,7 +78,8 @@
     "google-maps-infobox": "^2.0.0",
     "marker-clusterer-plus": "^2.1.4",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "ts-jest": "^25.2.0"
   },
   "keywords": [
     "react",

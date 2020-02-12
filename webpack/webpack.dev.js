@@ -2,7 +2,7 @@
 const path = require('path');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const { aliases } = require('./settings/aliases');
-const { imageLoader, tsxLoader } = require('./settings/rules');
+const { imageLoader, tsxLoader, tstLoader } = require('./settings/rules');
 const { distCleaner, envInit, htmlInit } = require('./settings/plugins');
 const pathToRoot = '../';
 
