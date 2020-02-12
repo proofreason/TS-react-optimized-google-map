@@ -4,7 +4,9 @@ module.exports = {
       '^.+\\.(tsx?|jsx?)$': 'ts-jest',
     },
     collectCoverage: true,
-    testPathIgnorePatterns: ['<rootDir>/__tests__/__mocks__/'],
+    testPathIgnorePatterns: [
+      '<rootDir>/__tests__/__mocks__/', 
+    ],
     moduleFileExtensions: ['js', 'ts', 'tsx'],
     moduleNameMapper: {
       "@components(.*)$": "<rootDir>/src/components/$1",
@@ -14,5 +16,11 @@ module.exports = {
       "@develop_components(.*)$": "<rootDir>/develop/components/$1",
       "@develop_lib(.*)$": "<rootDir>/develop/lib/$1",
     },
-    setupFilesAfterEnv: ["<rootDir>/__jest__/global.setup.js"]
+    setupFilesAfterEnv: [
+      "<rootDir>/__jest__/global.setup.js",
+    ],
+    collectCoverageFrom: [
+      "<rootDir>/src/",
+      "<rootDir>/__tests__/",
+    ]
   }
