@@ -35,7 +35,7 @@ var useGoogleScript = function (_a) {
 };
 var GoogleScriptMounter = function (props) {
     if (props === void 0) { props = DEFUALT_PROPS; }
-    var currentProps = __assign({}, DEFUALT_PROPS, props);
+    var currentProps = __assign(__assign({}, DEFUALT_PROPS), props);
     var scriptUrl = currentProps.scriptUrl, onScriptLoad = currentProps.onScriptLoad, children = currentProps.children;
     useGoogleScript({ scriptUrl: scriptUrl, onScriptLoad: onScriptLoad });
     return React.createElement(React.Fragment, null, children);

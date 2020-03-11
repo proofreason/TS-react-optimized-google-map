@@ -1,3 +1,4 @@
+/// <reference types="googlemaps" />
 import { MarkerTypeOverwrite } from './mounterTypes';
 declare type InstanceMarkers = {
     current: MarkerTypeOverwrite[];
@@ -5,4 +6,7 @@ declare type InstanceMarkers = {
 interface MustExtendProps {
     instanceMarkers: InstanceMarkers;
 }
-export { InstanceMarkers, MustExtendProps };
+interface ReturnComponentMustProps {
+    onMountedMarkersChange?: (markers: google.maps.Marker[]) => void;
+}
+export { InstanceMarkers, MustExtendProps, ReturnComponentMustProps };

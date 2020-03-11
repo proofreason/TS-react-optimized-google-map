@@ -39,7 +39,8 @@ import * as React from 'react';
 var removeAllMarkers = function (reallyMountedMarkers, clustererContext) {
     var clusterer = clustererContext.clusterer;
     var mountedMarkers = reallyMountedMarkers[0];
-    mutableRemoveMarkersFrom(mountedMarkers, clusterer);
+    var validMarkers = mountedMarkers.filter(Boolean);
+    mutableRemoveMarkersFrom(validMarkers, clusterer, mountedMarkers);
 };
 var WithMarkerMounterCleanup = function (WrappedComponent) {
     var _a;
@@ -51,8 +52,10 @@ var WithMarkerMounterCleanup = function (WrappedComponent) {
                 return _this;
             }
             MarkerMounterWithCleanup.prototype.componentWillUnmount = function () {
+                var onMountedMarkersChange = this.props.onMountedMarkersChange;
                 var clustererContext = this.context[0];
                 removeAllMarkers([this.instanceMarkers.current, undefined], clustererContext);
+                onMountedMarkersChange && onMountedMarkersChange(this.instanceMarkers.current);
                 this.instanceMarkers &&
                     clustererContext.clusterer &&
                     clustererContext.clusterer.repaint();

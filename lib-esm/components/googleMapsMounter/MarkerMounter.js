@@ -9,6 +9,13 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 import MapMounterContext from "../../context/MapMounterContext";
 import { MarkerClustererContext, } from "../../context/MarkerClustererContext";
 import { MarkerMounterContext } from "../../context/ObjectMounterContext";
@@ -67,7 +74,7 @@ var markerIsIn = function (marker, inArray) {
 };
 var addMarkersToMap = function (markers, clusterer, map) {
     if (clusterer) {
-        var clustererMarkers = clusterer.getMarkers().slice();
+        var clustererMarkers = __spreadArrays(clusterer.getMarkers());
         var toAddMarkers = filterAlreadyPresentIn(markers, clustererMarkers);
         clusterer.addMarkers(toAddMarkers, true);
         return;
@@ -83,7 +90,7 @@ var addMarkersToMap = function (markers, clusterer, map) {
 var updateContext = function (mountedMarkers, markersDidChangeFlag, mounterContext, clustererContext) {
     var constextState = mounterContext[0], setContextState = mounterContext[1];
     constextState.stateObject.isUnmounted = false;
-    setContextState(__assign({}, constextState, { addObject: addMarker(mountedMarkers, markersDidChangeFlag, clustererContext.clusterer), removeObject: removeMarker(mountedMarkers, markersDidChangeFlag) }));
+    setContextState(__assign(__assign({}, constextState), { addObject: addMarker(mountedMarkers, markersDidChangeFlag, clustererContext.clusterer), removeObject: removeMarker(mountedMarkers, markersDidChangeFlag) }));
 };
 var useUpdateMarkers = function (mutableMarkers, markersDidChangeFlag, reallyMountedMarkers, mapContext, mounterContext, clustererContext) {
     var markersDidChange = markersDidChangeFlag[0], setMarkersDidCange = markersDidChangeFlag[1];
@@ -99,7 +106,7 @@ var useUpdateMarkers = function (mutableMarkers, markersDidChangeFlag, reallyMou
         removeMarkersMarkedToBeRemoved(mutableMarkers, clusterer, mapContext.map);
         addMarkersToMap(mutableMarkers, clusterer, mapContext.map);
         clusterer && clusterer.repaint();
-        var newMarkers = mutableMarkers.slice();
+        var newMarkers = __spreadArrays(mutableMarkers);
         setMountedMarkers(newMarkers);
         setMarkersDidCange(false);
     }, [markersDidChange, mounterContextState]);
@@ -114,14 +121,13 @@ var useUpdateContext = function (context, markersDidChangeFlag, clustererContext
 };
 var MarkerMounter = function (props) {
     if (props === void 0) { props = DEFAULT_MARKER_ARRAY_PROPS; }
-    var currentProps = __assign({}, DEFAULT_MARKER_ARRAY_PROPS, props);
+    var currentProps = __assign(__assign({}, DEFAULT_MARKER_ARRAY_PROPS), props);
     var children = currentProps.children, displayOnlyInFov = currentProps.displayOnlyInFov, instanceMarkers = currentProps.instanceMarkers;
     var mountedMarkersState = useState([]);
     var markersChangedFlag = useState(false);
-    var _a = useContext(MapMounterContext), mapContext = _a[0], setMapContext = _a[1];
-    var _b = useContext(MarkerClustererContext), clustererContext = _b[0], setClustererContext = _b[1];
-    var mountedMarkers = mountedMarkersState[0], setMountedMarkers = mountedMarkersState[1];
-    var markersHaveChanged = markersChangedFlag[0];
+    var mapContext = useContext(MapMounterContext)[0];
+    var clustererContext = useContext(MarkerClustererContext)[0];
+    var mountedMarkers = mountedMarkersState[0];
     var context = useState({
         stateObject: { isUnmounted: false, objects: [] },
         map: mapContext.map,
@@ -139,8 +145,7 @@ var MarkerMounter = function (props) {
     useUpdateContext(context, markersChangedFlag, clustererContext);
     useUpdateMarkers(contextState.stateObject.objects, markersChangedFlag, mountedMarkersState, mapContext, context, clustererContext);
     if (!mapContext) {
-        console.error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
-        return null;
+        throw Error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
     }
     if (markersChangedFlag) {
         instanceMarkers.current = mountedMarkers;

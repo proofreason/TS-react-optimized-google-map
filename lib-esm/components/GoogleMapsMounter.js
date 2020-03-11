@@ -39,11 +39,11 @@ var useGoogleMap = function (mapSettings) {
 };
 var GoogleMapsMounter = React.memo(function (props) {
     if (props === void 0) { props = DEFAULT_PROPS; }
-    var currentProps = __assign({}, DEFAULT_PROPS, props);
+    var currentProps = __assign(__assign({}, DEFAULT_PROPS), props);
     var children = currentProps.children, mapElement = currentProps.mapElement, getMountedMarkers = currentProps.getMountedMarkers, mapWrapperStyle = currentProps.mapWrapperStyle;
     var context = React.useState({ map: null });
     var contextState = context[0], setContext = context[1];
-    var map = useGoogleMap(__assign({}, currentProps, { mapElementId: mapElement.props.id }));
+    var map = useGoogleMap(__assign(__assign({}, currentProps), { mapElementId: mapElement.props.id }));
     map && !contextState.map && setContext({ map: map });
     return (React.createElement(MapMounterContext.Provider, { value: context },
         React.createElement("div", { className: 'react-map-content-wrapper', style: mapWrapperStyle },

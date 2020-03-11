@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
 };
 import MapMounterContext from "../context/MapMounterContext";
 import { MarkerClustererContext, } from "../context/MarkerClustererContext";
-import * as MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
+import MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
 import * as React from 'react';
 import MarkerMounter from './googleMapsMounter/MarkerMounter';
 var INITIAL_STATE = {
@@ -35,7 +35,7 @@ var OptimizedMarkerClusterer = function (props) {
     var contextState = context[0], setContextState = context[1];
     var _a = React.useContext(MapMounterContext), mapMounterContext = _a[0], setMapMounterContext = _a[1];
     var allMakers = contextState.clusterer ? contextState.clusterer.getMarkers() : [];
-    var currentProps = __assign({}, defaultClustererOptions, clusteringSettings);
+    var currentProps = __assign(__assign({}, defaultClustererOptions), clusteringSettings);
     React.useEffect(function () {
         var clusterer = new MarkerClusterer(mapMounterContext.map, [], currentProps);
         setContextState({ clusterer: clusterer });
@@ -62,8 +62,10 @@ var OptimizedMarkerClusterer = function (props) {
         return function () { return google.maps.event.removeListener(clusterClick); };
     }, [contextState.clusterer]);
     var handleClusterClick = function (cluster) {
-        var onClickExtender = props.clusteringSettings.onClickExtender;
-        onClickExtender && currentProps.onClickExtender(cluster);
+        if (props.clusteringSettings) {
+            var onClickExtender = props.clusteringSettings.onClickExtender;
+            onClickExtender && currentProps.onClickExtender(cluster);
+        }
         var ClusterMap = cluster.getMap();
         var padding = 100;
         if (ClusterMap.getZoom() <= contextState.clusterer.getMaxZoom()) {

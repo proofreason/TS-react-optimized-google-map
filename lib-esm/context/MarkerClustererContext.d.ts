@@ -4,5 +4,5 @@ interface MarkerClustererContextProps {
     clusterer: MarkerClusterer;
 }
 declare type MarkerClustererContextType = [MarkerClustererContextProps, React.Dispatch<React.SetStateAction<MarkerClustererContextProps>>];
-declare const MarkerClustererContext: React.Context<[MarkerClustererContextProps, React.Dispatch<React.SetStateAction<MarkerClustererContextProps>>]>;
+declare const MarkerClustererContext: React.Context<MarkerClustererContextType>;
 export { MarkerClustererContext, MarkerClustererContextProps, MarkerClustererContextType };

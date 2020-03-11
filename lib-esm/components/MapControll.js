@@ -29,10 +29,10 @@ var MapControll = function (props) {
     var updateStyles = function () {
         var styles = {};
         if (offsets) {
-            styles = __assign({}, styles, getOffsetStyles());
+            styles = __assign(__assign({}, styles), getOffsetStyles());
         }
         if (containerStyle) {
-            styles = __assign({}, styles, containerStyle);
+            styles = __assign(__assign({}, styles), containerStyle);
         }
         Object.assign(controlDiv.style, styles);
     };

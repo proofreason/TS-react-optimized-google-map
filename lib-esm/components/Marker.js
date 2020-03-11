@@ -13,14 +13,13 @@ import { useAddToObjectMounter, MarkerMounterContext, objectMounterReady, } from
 import { addListenersToMarker } from "../lib/MapUtils";
 import * as React from 'react';
 var useContext = React.useContext, useEffect = React.useEffect;
-var noMounterFound = function () {
-    console.error('No map found to mount marker to. Did you wrap it with ObjectMounter or AsyncMounter?');
-    return false;
+var throwNoMounterFound = function () {
+    throw Error('No map found to mount marker to. Did you wrap it with ObjectMounter or AsyncMounter?');
 };
 var useAddMarkerToMap = function (props) {
     var markerArrayContext = useContext(MarkerMounterContext)[0];
     if (!markerArrayContext) {
-        noMounterFound();
+        throwNoMounterFound();
     }
     return useAddToObjectMounter(markerArrayContext, props);
 };
