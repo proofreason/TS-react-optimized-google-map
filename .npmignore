@@ -1,3 +1,7 @@
+__jest__
+__setups__
+__tests__
+coverage
 develop
 webpack
 tslint.json
