@@ -1,5 +1,5 @@
-import { MarkerMounterContextProps } from '@context/ObjectMounterContext';
-import { MarkerMounterContextType, MarkerProps } from 'lib';
+import { MarkerProps } from '@components/Marker';
+import { MarkerMounterContextProps, MarkerMounterContextType } from '@context/ObjectMounterContext';
 
 const createMarkerMounterContext = (map: google.maps.Map): MarkerMounterContextType => {
     const addObject = (objectProps: MarkerProps, id: number) => {

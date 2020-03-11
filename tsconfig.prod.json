@@ -2,6 +2,7 @@
     "compilerOptions": {
         "moduleResolution": "node",
         "module": "commonjs",
+        "esModuleInterop": true,
         "noImplicitAny": true,
         "jsx": "react",
         "sourceMap": true,
@@ -41,7 +42,13 @@
           ],
     },
     "exclude": [
+        "**/*/__mocks__/**/*",
         "node_modules",
+        "__jest__",
+        "__setups__",
+        "__tests__",
+        "coverage",
+        "jest",
         "develop",
         "dist",
         "lib",
