@@ -3,7 +3,7 @@ import {
     MarkerClustererContext,
     MarkerClustererContextType,
 } from '@context/MarkerClustererContext';
-import * as MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
+import MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
 import * as React from 'react';
 import MarkerMounter from './googleMapsMounter/MarkerMounter';
 
@@ -82,8 +82,10 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
     }, [contextState.clusterer]);
 
     const handleClusterClick = (cluster: Cluster) => {
-        const { onClickExtender } = props.clusteringSettings;
-        onClickExtender && currentProps.onClickExtender(cluster);
+        if (props.clusteringSettings) {
+            const { onClickExtender } = props.clusteringSettings;
+            onClickExtender && currentProps.onClickExtender(cluster);
+        }
         const ClusterMap = cluster.getMap();
         const padding = 100;
         if (ClusterMap.getZoom() <= contextState.clusterer.getMaxZoom()) {

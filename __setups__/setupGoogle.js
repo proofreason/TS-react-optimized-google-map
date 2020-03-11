@@ -1,9 +1,31 @@
+markerPoolMock = [];
 google ={
     maps:{
+        OverlayView: class{
+            setMap(){};
+        },
+        test: {},
+        event:{
+            clearInstanceListeners(objects){},
+            addListener(){},
+            removeListener(){},
+        },
         Marker:class{
             setOptions(){};
             getMap(){};
-            setMap(){};
+            setMap(map){
+                // be careful of restrictions to mocked map element
+                if (map){
+                    markerPoolMock.push(this);
+                    return;
+                }
+                const markerIndex = markerPoolMock.indexOf(this);
+                if (markerIndex !== -1){
+                    delete markerPoolMock[markerIndex];
+                    markerPoolMock = markerPoolMock.filter(Boolean);
+                }
+            };
+            getDraggable(){return false};
         },
         Map:class{ setTilt(){}; fitBounds(){}},
         LatLngBounds:class{},

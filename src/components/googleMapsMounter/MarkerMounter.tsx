@@ -217,8 +217,7 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
     );
 
     if (!mapContext) {
-        console.error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
-        return null;
+        throw Error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
     }
 
     if (markersChangedFlag) {

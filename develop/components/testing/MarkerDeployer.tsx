@@ -1,13 +1,13 @@
 import { LatLngPosition, getRandomLocations } from '@develop_lib/markerUtils';
 import { useMarkerCache, updateMarkerCache } from '@lib/Optimization';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 const { useState } = React;
 import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
 import Marker, { MarkerProps } from '@components/Marker';
-import MarkerBatch from '@components/MarkerBatch';
+import OptimizedMarkerClusterer from '@components/MarkerClusterer';
 import MapMounterContext from '@context/MapMounterContext';
-import * as MarkerIconSelected from './img/marker-black.svg';
-import * as MarkerIcon from './img/marker-yellow.svg';
+import MarkerIconSelected from './img/marker-black.svg';
+import MarkerIcon from './img/marker-yellow.svg';
 
 const prevAndSelectedId: number[] = [null];
 let prevSelectedId: number = null;
@@ -24,11 +24,16 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
         React.Dispatch<LatLngPosition[]>,
     ] = useState(null);
     const [mapMounterContext, setMapMounterContex] = React.useContext(MapMounterContext);
-    const [displayMarkers, setDisplayMarkers] = useState(true);
-    const numOfLocations = 30;
-    if (!locations) {
+    const [shouldCluster, setShouldCluster] = useState(true);
+    // tslint:disable-next-line: no-magic-numbers
+    const numOfLocations = display ? 500 : 1117;
+
+    useEffect(() => {
+        // tslint:disable-next-line: no-magic-numbers
+        mapMounterContext.map.setZoom(6);
         setLocations(getRandomLocations(numOfLocations));
-    }
+    }, [display]);
+
     const setSelected = (id: number) => () => {
         prevSelectedId = prevAndSelectedId.shift();
         prevAndSelectedId.push(id);
@@ -112,28 +117,29 @@ const MarkerDeployer = ({ display }: MarkerDeployerProps) => {
         }
     }, [display]);
 
-    const toggleDisplayMarkers = () => {
-        displayMarkers ? setDisplayMarkers(false) : setDisplayMarkers(true);
+    const toggleShouldCluster = () => {
+        shouldCluster ? setShouldCluster(false) : setShouldCluster(true);
     };
 
     React.useEffect(() => {
         const breakingPoint = 8;
         if (mapMounterContext.map) {
             const listener = mapMounterContext.map.addListener('idle', () => {
-                if (mapMounterContext.map.getZoom() === breakingPoint) {
-                    // toggleDisplayMarkers();
+                if (mapMounterContext.map.getZoom() >= breakingPoint) {
+                    shouldCluster && setShouldCluster(false);
+                } else {
+                    !shouldCluster && setShouldCluster(true);
                 }
             });
             return () => listener.remove();
         }
-    }, [mapMounterContext.map, displayMarkers]);
-    const testPosition = getRandomLocations(1)[0];
-    if (!display) {
-        return <></>;
-    }
+    }, [mapMounterContext.map, shouldCluster]);
     return (
         <>
-            <MarkerBatch>{display && displayMarkers && markerCache}</MarkerBatch>
+            {shouldCluster && (
+                <OptimizedMarkerClusterer>{uncachedMarkers}</OptimizedMarkerClusterer>
+            )}
+            {!shouldCluster && <MarkerMounter>{uncachedMarkers}</MarkerMounter>}
         </>
     );
 };

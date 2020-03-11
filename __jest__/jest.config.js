@@ -3,11 +3,11 @@ module.exports = {
     transform: {
       '^.+\\.(tsx?|jsx?)$': 'ts-jest',
     },
-    collectCoverage: true,
+    collectCoverage: false,
     testPathIgnorePatterns: [
       '<rootDir>/__tests__/__mocks__/', 
     ],
-    moduleFileExtensions: ['js', 'ts', 'tsx'],
+    moduleFileExtensions: ['js', 'ts', 'tsx', 'json'],
     moduleNameMapper: {
       "@components(.*)$": "<rootDir>/src/components/$1",
       "@context(.*)$": "<rootDir>/src/context/$1",
@@ -20,7 +20,6 @@ module.exports = {
       "<rootDir>/__jest__/global.setup.js",
     ],
     collectCoverageFrom: [
-      "<rootDir>/src/",
-      "<rootDir>/__tests__/",
+      "<rootDir>/src/**/*.{tsx,ts}",
     ]
   }
