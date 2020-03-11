@@ -182,10 +182,9 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
     const { children, displayOnlyInFov, instanceMarkers } = currentProps;
     const mountedMarkersState: MountedMarkersState = useState([]);
     const markersChangedFlag: ChangedMarkersStateFlag = useState(false);
-    const [mapContext, setMapContext] = useContext(MapMounterContext);
-    const [clustererContext, setClustererContext] = useContext(MarkerClustererContext);
-    const [mountedMarkers, setMountedMarkers] = mountedMarkersState;
-    const [markersHaveChanged] = markersChangedFlag;
+    const [mapContext] = useContext(MapMounterContext);
+    const [clustererContext] = useContext(MarkerClustererContext);
+    const [mountedMarkers] = mountedMarkersState;
     const context: MarkerMounterContextType = useState({
         stateObject: { isUnmounted: false, objects: [] },
         map: mapContext.map,
@@ -218,8 +217,7 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
     );
 
     if (!mapContext) {
-        console.error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
-        return null;
+        throw Error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
     }
 
     if (markersChangedFlag) {

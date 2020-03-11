@@ -13,7 +13,7 @@ const DEFAULT_MARKER_ARRAY_PROPS: MarkerArrayProps = {
     batchSize: 500,
 };
 
-const markersToMountObservers: ({ notify: () => void })[] = [];
+const markersToMountObservers: { notify: () => void }[] = [];
 const markersToMount: google.maps.Marker[] = [];
 const mountedMarkers: google.maps.Marker[] = [];
 let forceMount: NodeJS.Timeout = null;

@@ -6,4 +6,8 @@ interface MustExtendProps {
     instanceMarkers: InstanceMarkers;
 }
 
-export { InstanceMarkers, MustExtendProps };
+interface ReturnComponentMustProps {
+    onMountedMarkersChange?: (markers: google.maps.Marker[]) => void;
+}
+
+export { InstanceMarkers, MustExtendProps, ReturnComponentMustProps };

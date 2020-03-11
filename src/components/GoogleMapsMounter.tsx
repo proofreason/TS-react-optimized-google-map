@@ -1,4 +1,4 @@
-import MapMounterContext from '@context/MapMounterContext';
+import MapMounterContext, { MapMounterContextType } from '@context/MapMounterContext';
 import { googleMapsLoaded } from '@lib/Utils';
 import * as React from 'react';
 import MarkerMounter from './googleMapsMounter/MarkerMounter';
@@ -46,7 +46,7 @@ const useGoogleMap = (mapSettings: MapInitSettings): google.maps.Map => {
 const GoogleMapsMounter = React.memo((props: GoogleMapsMounterProps = DEFAULT_PROPS) => {
     const currentProps = { ...DEFAULT_PROPS, ...props };
     const { children, mapElement, getMountedMarkers, mapWrapperStyle } = currentProps;
-    const context = React.useState({ map: null });
+    const context: MapMounterContextType = React.useState({ map: null });
     const [contextState, setContext] = context;
     const map: google.maps.Map = useGoogleMap({
         ...currentProps,

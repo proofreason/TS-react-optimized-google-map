@@ -32,17 +32,16 @@ interface MarkerProps {
     markerOptions: MarkerOptions;
 }
 
-const noMounterFound = () => {
-    console.error(
+const throwNoMounterFound = () => {
+    throw Error(
         'No map found to mount marker to. Did you wrap it with ObjectMounter or AsyncMounter?',
     );
-    return false;
 };
 
 const useAddMarkerToMap = (props: MarkerProps): google.maps.Marker => {
     const [markerArrayContext] = useContext(MarkerMounterContext);
     if (!markerArrayContext) {
-        noMounterFound();
+        throwNoMounterFound();
     }
     return useAddToObjectMounter(markerArrayContext, props);
 };

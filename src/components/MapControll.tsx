@@ -19,11 +19,6 @@ interface ControllsOffsets {
     rightOffset?: number;
 }
 
-interface ControllReservedSpace {
-    heigh: string;
-    width: string;
-}
-
 const defaultProps: MapControllProps = {
     children: [] as React.ReactNode[],
     className: '',
