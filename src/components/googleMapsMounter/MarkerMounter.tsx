@@ -23,6 +23,7 @@ interface MarkerMounterProps extends MustExtendProps {
     children?: React.ReactNode;
     batchSize?: number;
     displayOnlyInFov?: boolean;
+    onMarkersChanged?: () => void;
     onMountedMarkersChange?: (markers: google.maps.Marker[]) => void;
 }
 
@@ -137,6 +138,7 @@ const useUpdateMarkers = (
     mapContext: MapMounterContextProps,
     mounterContext: MarkerMounterContextType,
     clustererContext: MarkerClustererContextProps,
+    instanceMarkers: React.MutableRefObject<MarkerTypeOverwrite[]>,
 ) => {
     const [markersDidChange, setMarkersDidCange] = markersDidChangeFlag;
     const [mounterContextState] = mounterContext;
@@ -154,6 +156,9 @@ const useUpdateMarkers = (
         addMarkersToMap(mutableMarkers, clusterer, mapContext.map);
         clusterer && clusterer.repaint();
         const newMarkers = [...mutableMarkers];
+        // we need to do this because addMarkersToMap adds them immediatly so cleanup needs to know that
+        // which markers are actually mounted
+        instanceMarkers.current = newMarkers;
         setMountedMarkers(newMarkers);
         setMarkersDidCange(false);
     }, [markersDidChange, mounterContextState]);
@@ -214,17 +219,17 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
         mapContext,
         context,
         clustererContext,
+        instanceMarkers,
     );
+
+    useEffect(() => {
+        props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
+    }, [mountedMarkers]);
 
     if (!mapContext) {
         throw Error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
     }
 
-    if (markersChangedFlag) {
-        instanceMarkers.current = mountedMarkers;
-    }
-
-    props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
     return (
         <MarkerMounterContext.Provider value={context}>{children}</MarkerMounterContext.Provider>
     );

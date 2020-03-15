@@ -7,6 +7,7 @@ import { render, cleanup, RenderResult } from '@testing-library/react';
 import { MarkerTypeOverwrite } from 'lib/types/mounterTypes';
 import React, { Children } from 'react';
 import { createMapObject, createMapContextMock } from '../src/context/__mocks__/MapMounterContext';
+import { MarkerMounterImmediateUnmounter } from './__mocks__/MarkerMounterImmediateUnmounter';
 jest.mock('@components/Marker');
 declare let markerPoolMock: MarkerTypeOverwrite[];
 
@@ -196,6 +197,29 @@ describe('MarkerMounter Marker mounting google object test', () => {
         expect(markerPoolMock).toHaveLength(2);
 
         unmount();
+
+        expect(markerPoolMock).toHaveLength(0);
+        testGoogleMarkerDoesNotExist(markerProps);
+        testGoogleMarkerDoesNotExist(secondMarkerProps);
+    });
+
+    test('Marker mounter unmounts google markers correctly when immediate unmounting', async () => {
+        const testingMarkerId = 7;
+        const markerProps: MarkerProps = {
+            id: testingMarkerId,
+            markerOptions: { position: testPosition },
+        };
+        const secondMarkerProps: MarkerProps = {
+            id: testingMarkerId + 3,
+            markerOptions: { position: testPosition },
+        };
+
+        const renderResult = render(
+            <MarkerMounterImmediateUnmounter mapContextValue={mapContextMock}>
+                <Marker {...secondMarkerProps} />
+                <Marker {...markerProps} />
+            </MarkerMounterImmediateUnmounter>,
+        );
 
         expect(markerPoolMock).toHaveLength(0);
         testGoogleMarkerDoesNotExist(markerProps);
