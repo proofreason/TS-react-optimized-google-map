@@ -23,7 +23,6 @@ interface MarkerMounterProps extends MustExtendProps {
     children?: React.ReactNode;
     batchSize?: number;
     displayOnlyInFov?: boolean;
-    onMarkersChanged?: () => void;
     onMountedMarkersChange?: (markers: google.maps.Marker[]) => void;
 }
 

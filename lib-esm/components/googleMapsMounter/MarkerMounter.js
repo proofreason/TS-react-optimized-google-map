@@ -92,7 +92,7 @@ var updateContext = function (mountedMarkers, markersDidChangeFlag, mounterConte
     constextState.stateObject.isUnmounted = false;
     setContextState(__assign(__assign({}, constextState), { addObject: addMarker(mountedMarkers, markersDidChangeFlag, clustererContext.clusterer), removeObject: removeMarker(mountedMarkers, markersDidChangeFlag) }));
 };
-var useUpdateMarkers = function (mutableMarkers, markersDidChangeFlag, reallyMountedMarkers, mapContext, mounterContext, clustererContext) {
+var useUpdateMarkers = function (mutableMarkers, markersDidChangeFlag, reallyMountedMarkers, mapContext, mounterContext, clustererContext, instanceMarkers) {
     var markersDidChange = markersDidChangeFlag[0], setMarkersDidCange = markersDidChangeFlag[1];
     var mounterContextState = mounterContext[0];
     useEffect(function () {
@@ -107,6 +107,9 @@ var useUpdateMarkers = function (mutableMarkers, markersDidChangeFlag, reallyMou
         addMarkersToMap(mutableMarkers, clusterer, mapContext.map);
         clusterer && clusterer.repaint();
         var newMarkers = __spreadArrays(mutableMarkers);
+        // we need to do this because addMarkersToMap adds them immediatly so cleanup needs to know that
+        // which markers are actually mounted
+        instanceMarkers.current = newMarkers;
         setMountedMarkers(newMarkers);
         setMarkersDidCange(false);
     }, [markersDidChange, mounterContextState]);
@@ -143,14 +146,13 @@ var MarkerMounter = function (props) {
         props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
     }, displayOnlyInFov);
     useUpdateContext(context, markersChangedFlag, clustererContext);
-    useUpdateMarkers(contextState.stateObject.objects, markersChangedFlag, mountedMarkersState, mapContext, context, clustererContext);
+    useUpdateMarkers(contextState.stateObject.objects, markersChangedFlag, mountedMarkersState, mapContext, context, clustererContext, instanceMarkers);
+    useEffect(function () {
+        props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
+    }, [mountedMarkers]);
     if (!mapContext) {
         throw Error('No map to mount to found. Did you place MarkerMounter in MapMounter?');
     }
-    if (markersChangedFlag) {
-        instanceMarkers.current = mountedMarkers;
-    }
-    props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
     return (React.createElement(MarkerMounterContext.Provider, { value: context }, children));
 };
 export default WithMarkerMounterCleanup(MarkerMounter);
