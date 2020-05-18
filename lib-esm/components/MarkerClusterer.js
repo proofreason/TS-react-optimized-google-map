@@ -30,11 +30,10 @@ var defaultClustererOptions = {
     gridSize: 50,
 };
 var OptimizedMarkerClusterer = function (props) {
-    var children = props.children, clusteringSettings = props.clusteringSettings, onMountedMarkersChange = props.onMountedMarkersChange;
+    var children = props.children, clusteringSettings = props.clusteringSettings, onMountedMarkersUpdateFinish = props.onMountedMarkersUpdateFinish, onMountedMarkersUpdateStart = props.onMountedMarkersUpdateStart;
     var context = React.useState({ clusterer: null });
     var contextState = context[0], setContextState = context[1];
-    var _a = React.useContext(MapMounterContext), mapMounterContext = _a[0], setMapMounterContext = _a[1];
-    var allMakers = contextState.clusterer ? contextState.clusterer.getMarkers() : [];
+    var mapMounterContext = React.useContext(MapMounterContext)[0];
     var currentProps = __assign(__assign({}, defaultClustererOptions), clusteringSettings);
     React.useEffect(function () {
         var clusterer = new MarkerClusterer(mapMounterContext.map, [], currentProps);
@@ -75,11 +74,8 @@ var OptimizedMarkerClusterer = function (props) {
             }
         }
     };
-    var getMountedMarkersAndRefresh = function (markers) {
-        onMountedMarkersChange && onMountedMarkersChange(markers);
-    };
     return (contextState.clusterer && (React.createElement(MarkerClustererContext.Provider, { value: context },
-        React.createElement(MarkerMounter, { onMountedMarkersChange: getMountedMarkersAndRefresh }, children))));
+        React.createElement(MarkerMounter, { onMountedMarkersUpdateFinish: onMountedMarkersUpdateFinish, onMountedMarkersUpdateStart: onMountedMarkersUpdateStart }, children))));
 };
 export default OptimizedMarkerClusterer;
 //# sourceMappingURL=MarkerClusterer.js.map

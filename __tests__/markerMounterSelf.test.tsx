@@ -16,7 +16,8 @@ describe('MarkerMounter Marker mounting self test', () => {
     let mountedMarkers: google.maps.Marker[];
     const testPosition = getRandomLocations(1)[0];
 
-    const getMountedMarkers = (markers: google.maps.Marker[]) => {
+    // Never do this kind of thing in real code. This is just to minimize redundant code in tests.
+    const getMountedMarkersOnChangeFinish = (markers: google.maps.Marker[]) => {
         mountedMarkers = markers;
     };
 
@@ -28,6 +29,48 @@ describe('MarkerMounter Marker mounting self test', () => {
 
     afterEach(() => {
         cleanup();
+    });
+
+    // This is really important since we are using the output of this to veryfy the other tests
+    test('Marker mounter notifies about marker change correctly', async () => {
+        const testingMarkerId = 5;
+        const markerProps: MarkerProps = {
+            id: testingMarkerId,
+            markerOptions: { position: testPosition },
+        };
+
+        let notifiedOnStartMarkers: google.maps.Marker[] = [];
+        let notifiedOnFinishMarkers: google.maps.Marker[] = [];
+
+        const updateNotifiedOnStartMarkers = (markers: google.maps.Marker[]) => {
+            notifiedOnStartMarkers = markers;
+        };
+
+        const updateNotifiedOnFinishMarkers = (markers: google.maps.Marker[]) => {
+            notifiedOnFinishMarkers = markers;
+        };
+
+        const renderResult = renderMarkerMounterWith(
+            <Marker {...markerProps} />,
+            updateNotifiedOnStartMarkers,
+            updateNotifiedOnFinishMarkers,
+        );
+        const { rerender } = renderResult;
+
+        expect(notifiedOnStartMarkers).toHaveLength(0);
+        expect(notifiedOnFinishMarkers).toHaveLength(testingMarkerId + 1);
+
+        rerender(
+            getMarkerMounterWith(
+                undefined,
+                updateNotifiedOnStartMarkers,
+                updateNotifiedOnFinishMarkers,
+            ),
+        );
+
+        expect(notifiedOnStartMarkers).toHaveLength(testingMarkerId + 1);
+        const onlySetFinishMarkers = notifiedOnFinishMarkers.filter(Boolean);
+        expect(onlySetFinishMarkers).toHaveLength(0);
     });
 
     test('Marker mounter adds marker correctly', async () => {
@@ -56,7 +99,7 @@ describe('MarkerMounter Marker mounting self test', () => {
         const renderResult = renderMarkerMounterWith(<Marker {...markerProps} />);
         const { rerender } = renderResult;
 
-        rerender(<MarkerMounter onMountedMarkersChange={getMountedMarkers} />);
+        rerender(<MarkerMounter onMountedMarkersUpdateFinish={getMountedMarkersOnChangeFinish} />);
 
         expect(mountedMarkers).toHaveLength(testingMarkerId + 1);
         await testIfMarkerWithIdIsUnmounted(markerProps, renderResult);
@@ -148,7 +191,7 @@ describe('MarkerMounter Marker mounting self test', () => {
         await testIfMarkerWithIdIsMounted(secondMarkerProps, renderResult);
         const onlySetMarkers = mountedMarkers.filter(Boolean);
         expect(onlySetMarkers).toHaveLength(1);
-        rerender(<MarkerMounter onMountedMarkersChange={getMountedMarkers} />);
+        rerender(<MarkerMounter onMountedMarkersUpdateFinish={getMountedMarkersOnChangeFinish} />);
         await testIfMarkerWithIdIsUnmounted(markerProps, renderResult);
         const onlySetMarkersAfterUnmount = mountedMarkers.filter(Boolean);
         expect(onlySetMarkersAfterUnmount).toHaveLength(0);
@@ -181,12 +224,30 @@ describe('MarkerMounter Marker mounting self test', () => {
         await testIfMarkerWithIdIsUnmounted(secondMarkerProps, renderResult);
     });
 
-    const getMarkerMounterWith = (children?: JSX.Element) => (
-        <MarkerMounter onMountedMarkersChange={getMountedMarkers}>{children}</MarkerMounter>
+    const getMarkerMounterWith = (
+        children?: JSX.Element,
+        onMarkersChangeStart?: (markers: google.maps.Marker[]) => void,
+        // Never do this kind of thing in real code. This is just to minimize redundant code in tests.
+        onMarkersChangeFinish: (
+            markers: google.maps.Marker[],
+        ) => void = getMountedMarkersOnChangeFinish,
+    ) => (
+        <MarkerMounter
+            onMountedMarkersUpdateStart={onMarkersChangeStart}
+            onMountedMarkersUpdateFinish={onMarkersChangeFinish}
+        >
+            {children}
+        </MarkerMounter>
     );
 
-    const renderMarkerMounterWith = (children?: JSX.Element) =>
-        render(getMarkerMounterWith(children));
+    const renderMarkerMounterWith = (
+        children?: JSX.Element,
+        onMarkersChangeStart?: (markers: google.maps.Marker[]) => void,
+        // Never do this kind of thing in real code. This is just to minimize redundant code in tests.
+        onMarkersChangeFinish: (
+            markers: google.maps.Marker[],
+        ) => void = getMountedMarkersOnChangeFinish,
+    ) => render(getMarkerMounterWith(children, onMarkersChangeStart, onMarkersChangeFinish));
 
     const testIfMarkerWithIdIsMounted = async (
         markerProps: MarkerProps,

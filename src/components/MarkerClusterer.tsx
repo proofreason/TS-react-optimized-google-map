@@ -14,7 +14,8 @@ interface OptimizedMarkerClustererState {
 interface OptimizedClustererProps<MarkerType extends google.maps.Marker = google.maps.Marker> {
     children?: React.ReactNode;
     clusteringSettings?: ClusteringSettings<MarkerType>;
-    onMountedMarkersChange?: (marksers: MarkerType[]) => void;
+    onMountedMarkersUpdateFinish?: (markers: google.maps.Marker[]) => void;
+    onMountedMarkersUpdateStart?: (markers: google.maps.Marker[]) => void;
 }
 
 /**
@@ -45,11 +46,15 @@ const defaultClustererOptions: ClusteringSettings = {
 };
 
 const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
-    const { children, clusteringSettings, onMountedMarkersChange } = props;
+    const {
+        children,
+        clusteringSettings,
+        onMountedMarkersUpdateFinish,
+        onMountedMarkersUpdateStart,
+    } = props;
     const context: MarkerClustererContextType = React.useState({ clusterer: null });
     const [contextState, setContextState] = context;
-    const [mapMounterContext, setMapMounterContext] = React.useContext(MapMounterContext);
-    const allMakers = contextState.clusterer ? contextState.clusterer.getMarkers() : [];
+    const [mapMounterContext] = React.useContext(MapMounterContext);
     const currentProps = { ...defaultClustererOptions, ...clusteringSettings };
     React.useEffect(() => {
         const clusterer = new MarkerClusterer(mapMounterContext.map, [], currentProps);
@@ -96,14 +101,13 @@ const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
         }
     };
 
-    const getMountedMarkersAndRefresh = (markers: google.maps.Marker[]) => {
-        onMountedMarkersChange && onMountedMarkersChange(markers);
-    };
-
     return (
         contextState.clusterer && (
             <MarkerClustererContext.Provider value={context}>
-                <MarkerMounter onMountedMarkersChange={getMountedMarkersAndRefresh}>
+                <MarkerMounter
+                    onMountedMarkersUpdateFinish={onMountedMarkersUpdateFinish}
+                    onMountedMarkersUpdateStart={onMountedMarkersUpdateStart}
+                >
                     {children}
                 </MarkerMounter>
             </MarkerClustererContext.Provider>

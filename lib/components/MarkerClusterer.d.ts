@@ -4,7 +4,8 @@ import * as React from 'react';
 interface OptimizedClustererProps<MarkerType extends google.maps.Marker = google.maps.Marker> {
     children?: React.ReactNode;
     clusteringSettings?: ClusteringSettings<MarkerType>;
-    onMountedMarkersChange?: (marksers: MarkerType[]) => void;
+    onMountedMarkersUpdateFinish?: (markers: google.maps.Marker[]) => void;
+    onMountedMarkersUpdateStart?: (markers: google.maps.Marker[]) => void;
 }
 /**
  * Functions cannot be changed after inicialization for now!

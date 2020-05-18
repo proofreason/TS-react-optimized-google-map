@@ -63,11 +63,12 @@ var hideOutOfFovMarkers = function (markers, map) {
         return marker;
     });
 };
-var useHideOutOfFovMarkers = function (markers, map, callback, active) {
+var useHideOutOfFovMarkers = function (markers, map, onStart, onFinish, active) {
     if (active === void 0) { active = true; }
     var realodOnChange = function () {
+        onStart && onStart(markers);
         hideOutOfFovMarkers(markers, map);
-        callback && callback();
+        onFinish && onFinish(markers);
     };
     useEffect(function () {
         active && realodOnChange();

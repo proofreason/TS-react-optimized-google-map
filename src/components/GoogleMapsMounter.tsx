@@ -59,7 +59,7 @@ const GoogleMapsMounter = React.memo((props: GoogleMapsMounterProps = DEFAULT_PR
                 {mapElement}
                 {contextState.map &&
                     (props.withMounter ? (
-                        <MarkerMounter onMountedMarkersChange={getMountedMarkers} key={0}>
+                        <MarkerMounter onMountedMarkersUpdateFinish={getMountedMarkers} key={0}>
                             <div className="react-map-added-content">{children}</div>
                         </MarkerMounter>
                     ) : (

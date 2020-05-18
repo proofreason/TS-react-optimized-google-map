@@ -21,7 +21,7 @@ export const MarkerMounterImmediateUnmounter = ({
     return (
         <MapMounterContext.Provider value={mapContextValue}>
             <MarkerMounter
-                onMountedMarkersChange={(mountedMarkers) =>
+                onMountedMarkersUpdateFinish={(mountedMarkers) =>
                     mountedMarkers.length > 0 && setImmediateUnmounter(true)
                 }
             >

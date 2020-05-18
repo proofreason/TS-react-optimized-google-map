@@ -49,7 +49,7 @@ var GoogleMapsMounter = React.memo(function (props) {
         React.createElement("div", { className: 'react-map-content-wrapper', style: mapWrapperStyle },
             mapElement,
             contextState.map &&
-                (props.withMounter ? (React.createElement(MarkerMounter, { onMountedMarkersChange: getMountedMarkers, key: 0 },
+                (props.withMounter ? (React.createElement(MarkerMounter, { onMountedMarkersUpdateFinish: getMountedMarkers, key: 0 },
                     React.createElement("div", { className: "react-map-added-content" }, children))) : (React.createElement("div", { className: "react-map-added-content" }, children))))));
 });
 export default GoogleMapsMounter;

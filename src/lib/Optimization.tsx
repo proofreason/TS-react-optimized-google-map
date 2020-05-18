@@ -70,12 +70,14 @@ const hideOutOfFovMarkers = (markers: google.maps.Marker[], map: google.maps.Map
 const useHideOutOfFovMarkers = (
     markers: google.maps.Marker[],
     map: google.maps.Map,
-    callback?: () => void,
+    onStart?: (markers: google.maps.Marker[]) => void,
+    onFinish?: (markers: google.maps.Marker[]) => void,
     active = true,
 ) => {
     const realodOnChange = () => {
+        onStart && onStart(markers);
         hideOutOfFovMarkers(markers, map);
-        callback && callback();
+        onFinish && onFinish(markers);
     };
     useEffect(() => {
         active && realodOnChange();

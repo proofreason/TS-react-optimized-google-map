@@ -23,7 +23,8 @@ interface MarkerMounterProps extends MustExtendProps {
     children?: React.ReactNode;
     batchSize?: number;
     displayOnlyInFov?: boolean;
-    onMountedMarkersChange?: (markers: google.maps.Marker[]) => void;
+    onMountedMarkersUpdateFinish?: (markers: google.maps.Marker[]) => void;
+    onMountedMarkersUpdateStart?: (markers: google.maps.Marker[]) => void;
 }
 
 const DEFAULT_MARKER_ARRAY_PROPS: MarkerMounterProps = {
@@ -138,6 +139,7 @@ const useUpdateMarkers = (
     mounterContext: MarkerMounterContextType,
     clustererContext: MarkerClustererContextProps,
     instanceMarkers: React.MutableRefObject<MarkerTypeOverwrite[]>,
+    onUpdateStart?: (markers: MarkerTypeOverwrite[]) => void,
 ) => {
     const [markersDidChange, setMarkersDidCange] = markersDidChangeFlag;
     const [mounterContextState] = mounterContext;
@@ -150,6 +152,7 @@ const useUpdateMarkers = (
         ) {
             return;
         }
+        onUpdateStart?.(mountedMarkers);
         const { clusterer } = clustererContext;
         removeMarkersMarkedToBeRemoved(mutableMarkers, clusterer, mapContext.map);
         addMarkersToMap(mutableMarkers, clusterer, mapContext.map);
@@ -201,11 +204,13 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
     useHideOutOfFovMarkers(
         mountedMarkers,
         map,
+        props.onMountedMarkersUpdateStart,
         () => {
             if (clustererContext.clusterer && mountedMarkers) {
                 clustererContext.clusterer.repaint();
             }
-            props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
+            props.onMountedMarkersUpdateFinish &&
+                props.onMountedMarkersUpdateFinish(mountedMarkers);
         },
         displayOnlyInFov,
     );
@@ -219,10 +224,11 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
         context,
         clustererContext,
         instanceMarkers,
+        props.onMountedMarkersUpdateStart,
     );
 
     useEffect(() => {
-        props.onMountedMarkersChange && props.onMountedMarkersChange(mountedMarkers);
+        props.onMountedMarkersUpdateFinish && props.onMountedMarkersUpdateFinish(mountedMarkers);
     }, [mountedMarkers]);
 
     if (!mapContext) {
