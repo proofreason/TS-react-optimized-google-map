@@ -1,4 +1,3 @@
-"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -34,22 +33,13 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var MarkerClustererContext_1 = require("../../../context/MarkerClustererContext");
-var MounterCleanup_1 = require("../../../lib/MounterCleanup");
-var React = __importStar(require("react"));
+import { MarkerClustererContext, } from "../../../context/MarkerClustererContext";
+import { mutableRemoveMarkersFrom } from "../../../lib/MounterCleanup";
+import * as React from 'react';
 var removeAllMarkers = function (reallyMountedMarkers, clustererContext) {
     var clusterer = clustererContext.clusterer;
-    var mountedMarkers = reallyMountedMarkers[0];
-    var validMarkers = mountedMarkers.filter(Boolean);
-    MounterCleanup_1.mutableRemoveMarkersFrom(validMarkers, clusterer, mountedMarkers);
+    var validMarkers = reallyMountedMarkers.filter(Boolean);
+    mutableRemoveMarkersFrom(validMarkers, clusterer, reallyMountedMarkers);
 };
 var WithMarkerMounterCleanup = function (WrappedComponent) {
     var _a;
@@ -63,7 +53,7 @@ var WithMarkerMounterCleanup = function (WrappedComponent) {
             MarkerMounterWithCleanup.prototype.componentWillUnmount = function () {
                 var onMountedMarkersChange = this.props.onMountedMarkersChange;
                 var clustererContext = this.context[0];
-                removeAllMarkers([this.instanceMarkers.current, undefined], clustererContext);
+                removeAllMarkers(this.instanceMarkers.current, clustererContext);
                 onMountedMarkersChange && onMountedMarkersChange(this.instanceMarkers.current);
                 this.instanceMarkers &&
                     clustererContext.clusterer &&
@@ -76,8 +66,8 @@ var WithMarkerMounterCleanup = function (WrappedComponent) {
             };
             return MarkerMounterWithCleanup;
         }(React.Component)),
-        _a.contextType = MarkerClustererContext_1.MarkerClustererContext,
+        _a.contextType = MarkerClustererContext,
         _a;
 };
-exports.default = WithMarkerMounterCleanup;
+export default WithMarkerMounterCleanup;
 //# sourceMappingURL=WithMarkerMounterCleanup.js.map

@@ -13,7 +13,7 @@ import MapMounterContext from "../context/MapMounterContext";
 import { MarkerClustererContext, } from "../context/MarkerClustererContext";
 import MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
 import * as React from 'react';
-import MarkerMounter from './googleMapsMounter/MarkerMounter';
+import MarkerMounter from './googleMapsMounters/MarkerMounter';
 var INITIAL_STATE = {
     context: [{ clusterer: null }, null],
 };

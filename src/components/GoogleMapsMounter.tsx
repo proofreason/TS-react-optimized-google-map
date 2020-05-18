@@ -1,7 +1,7 @@
 import MapMounterContext, { MapMounterContextType } from '@context/MapMounterContext';
 import { googleMapsLoaded } from '@lib/Utils';
 import * as React from 'react';
-import MarkerMounter from './googleMapsMounter/MarkerMounter';
+import MarkerMounter from './googleMapsMounters/MarkerMounter';
 const { useEffect, useState } = React;
 
 interface GoogleMapsMounterProps extends google.maps.MapOptions {

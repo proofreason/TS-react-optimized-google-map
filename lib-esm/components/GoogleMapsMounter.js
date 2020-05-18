@@ -12,7 +12,7 @@ var __assign = (this && this.__assign) || function () {
 import MapMounterContext from "../context/MapMounterContext";
 import { googleMapsLoaded } from "../lib/Utils";
 import * as React from 'react';
-import MarkerMounter from './googleMapsMounter/MarkerMounter';
+import MarkerMounter from './googleMapsMounters/MarkerMounter';
 var useEffect = React.useEffect, useState = React.useState;
 var DEFAULT_ELEMENT_ID = 'google-maps-element';
 var DEFAULT_PROPS = {

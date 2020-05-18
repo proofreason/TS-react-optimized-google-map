@@ -58,9 +58,14 @@ describe('MarkerMounter Marker mounting google object test', () => {
 
         expect(markerPoolMock).toHaveLength(0);
 
-        renderMarkerClustererWith(<Marker {...markerProps} />, updateMarkerPool);
+        const renderResult = renderMarkerClustererWith(
+            <Marker {...markerProps} />,
+            updateMarkerPool,
+        );
 
-        const renderResult = renderMarkerClustererWith(undefined, updateMarkerPool);
+        const { rerender } = renderResult;
+
+        rerender(getMarkerClustererWith(undefined, updateMarkerPool));
 
         const onlyNotEmptyMarkersArray = markerPoolMock.filter(Boolean);
         expect(onlyNotEmptyMarkersArray).toHaveLength(0);
@@ -70,7 +75,7 @@ describe('MarkerMounter Marker mounting google object test', () => {
         children?: JSX.Element,
         onMountedMarkersChange?: (markers: MarkerTypeOverwrite[]) => void,
     ) => (
-        <OptimizedMarkerClusterer onMountedMarkersChange={onMountedMarkersChange}>
+        <OptimizedMarkerClusterer onMountedMarkersUpdateFinish={onMountedMarkersChange}>
             {children}
         </OptimizedMarkerClusterer>
     );

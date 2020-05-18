@@ -1,5 +1,5 @@
 import { getMarkerMockText } from '@components/__mocks__/Marker';
-import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
+import MarkerMounter from '@components/googleMapsMounters/MarkerMounter';
 import Marker, { MarkerProps } from '@components/Marker';
 import MapMounterContext, { MapMounterContextType } from '@context/MapMounterContext';
 import { getRandomLocations } from '@develop_lib/markerUtils';

@@ -1,4 +1,4 @@
-import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
+import MarkerMounter from '@components/googleMapsMounters/MarkerMounter';
 import MapMounterContext, { MapMounterContextType } from '@context/MapMounterContext';
 import { MarkerTypeOverwrite } from 'lib/types/mounterTypes';
 import React, { useState, useEffect, useRef } from 'react';

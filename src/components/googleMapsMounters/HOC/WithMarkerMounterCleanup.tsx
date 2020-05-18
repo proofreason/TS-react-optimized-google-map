@@ -14,13 +14,12 @@ import * as React from 'react';
 import { Subtract } from 'utility-types';
 
 const removeAllMarkers = (
-    reallyMountedMarkers: MountedMarkersState,
+    reallyMountedMarkers: MarkerTypeOverwrite[],
     clustererContext: MarkerClustererContextProps,
 ) => {
     const { clusterer } = clustererContext;
-    const [mountedMarkers] = reallyMountedMarkers;
-    const validMarkers = mountedMarkers.filter(Boolean);
-    mutableRemoveMarkersFrom(validMarkers, clusterer, mountedMarkers);
+    const validMarkers = reallyMountedMarkers.filter(Boolean);
+    mutableRemoveMarkersFrom(validMarkers, clusterer, reallyMountedMarkers);
 };
 
 const WithMarkerMounterCleanup = <T extends MustExtendProps>(
@@ -36,7 +35,7 @@ const WithMarkerMounterCleanup = <T extends MustExtendProps>(
         componentWillUnmount() {
             const { onMountedMarkersChange } = this.props;
             const [clustererContext] = this.context;
-            removeAllMarkers([this.instanceMarkers.current, undefined], clustererContext);
+            removeAllMarkers(this.instanceMarkers.current, clustererContext);
             onMountedMarkersChange && onMountedMarkersChange(this.instanceMarkers.current);
             this.instanceMarkers &&
                 clustererContext.clusterer &&

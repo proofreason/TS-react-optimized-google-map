@@ -14,6 +14,7 @@ import {
     MountedMarkersState,
     ChangedMarkersStateFlag,
     MarkerTypeOverwrite,
+    MountedMarkersStateObject,
 } from '@src_types/mounterTypes';
 import * as React from 'react';
 import WithMarkerMounterCleanup from './HOC/WithMarkerMounterCleanup';
@@ -144,7 +145,7 @@ const useUpdateMarkers = (
     const [markersDidChange, setMarkersDidCange] = markersDidChangeFlag;
     const [mounterContextState] = mounterContext;
     useEffect(() => {
-        const [mountedMarkers, setMountedMarkers] = reallyMountedMarkers;
+        const [mountedMarkers, setMountedMarkersObject] = reallyMountedMarkers;
         if (
             !markersDidChange ||
             !mounterContextState.addObject ||
@@ -152,7 +153,7 @@ const useUpdateMarkers = (
         ) {
             return;
         }
-        onUpdateStart?.(mountedMarkers);
+        onUpdateStart?.(mountedMarkers.markers);
         const { clusterer } = clustererContext;
         removeMarkersMarkedToBeRemoved(mutableMarkers, clusterer, mapContext.map);
         addMarkersToMap(mutableMarkers, clusterer, mapContext.map);
@@ -161,7 +162,7 @@ const useUpdateMarkers = (
         // we need to do this because addMarkersToMap adds them immediatly so cleanup needs to know that
         // which markers are actually mounted
         instanceMarkers.current = newMarkers;
-        setMountedMarkers(newMarkers);
+        setMountedMarkersObject({ markers: newMarkers, initialStateWasAltered: true });
         setMarkersDidCange(false);
     }, [markersDidChange, mounterContextState]);
 };
@@ -187,7 +188,10 @@ const useUpdateContext = (
 const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) => {
     const currentProps = { ...DEFAULT_MARKER_ARRAY_PROPS, ...props };
     const { children, displayOnlyInFov, instanceMarkers } = currentProps;
-    const mountedMarkersState: MountedMarkersState = useState([]);
+    const mountedMarkersState = useState<MountedMarkersStateObject>({
+        markers: [],
+        initialStateWasAltered: false,
+    });
     const markersChangedFlag: ChangedMarkersStateFlag = useState(false);
     const [mapContext] = useContext(MapMounterContext);
     const [clustererContext] = useContext(MarkerClustererContext);
@@ -202,7 +206,7 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
     const { map } = mapContext;
 
     useHideOutOfFovMarkers(
-        mountedMarkers,
+        mountedMarkers.markers,
         map,
         props.onMountedMarkersUpdateStart,
         () => {
@@ -210,7 +214,7 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
                 clustererContext.clusterer.repaint();
             }
             props.onMountedMarkersUpdateFinish &&
-                props.onMountedMarkersUpdateFinish(mountedMarkers);
+                props.onMountedMarkersUpdateFinish(mountedMarkers.markers);
         },
         displayOnlyInFov,
     );
@@ -228,7 +232,11 @@ const MarkerMounter = (props: MarkerMounterProps = DEFAULT_MARKER_ARRAY_PROPS) =
     );
 
     useEffect(() => {
-        props.onMountedMarkersUpdateFinish && props.onMountedMarkersUpdateFinish(mountedMarkers);
+        if (!mountedMarkers.initialStateWasAltered) {
+            return;
+        }
+        props.onMountedMarkersUpdateFinish &&
+            props.onMountedMarkersUpdateFinish(mountedMarkers.markers);
     }, [mountedMarkers]);
 
     if (!mapContext) {

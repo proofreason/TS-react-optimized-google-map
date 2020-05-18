@@ -96,13 +96,13 @@ var useUpdateMarkers = function (mutableMarkers, markersDidChangeFlag, reallyMou
     var markersDidChange = markersDidChangeFlag[0], setMarkersDidCange = markersDidChangeFlag[1];
     var mounterContextState = mounterContext[0];
     useEffect(function () {
-        var mountedMarkers = reallyMountedMarkers[0], setMountedMarkers = reallyMountedMarkers[1];
+        var mountedMarkers = reallyMountedMarkers[0], setMountedMarkersObject = reallyMountedMarkers[1];
         if (!markersDidChange ||
             !mounterContextState.addObject ||
             !mounterContextState.removeObject) {
             return;
         }
-        onUpdateStart === null || onUpdateStart === void 0 ? void 0 : onUpdateStart(mountedMarkers);
+        onUpdateStart === null || onUpdateStart === void 0 ? void 0 : onUpdateStart(mountedMarkers.markers);
         var clusterer = clustererContext.clusterer;
         removeMarkersMarkedToBeRemoved(mutableMarkers, clusterer, mapContext.map);
         addMarkersToMap(mutableMarkers, clusterer, mapContext.map);
@@ -111,7 +111,7 @@ var useUpdateMarkers = function (mutableMarkers, markersDidChangeFlag, reallyMou
         // we need to do this because addMarkersToMap adds them immediatly so cleanup needs to know that
         // which markers are actually mounted
         instanceMarkers.current = newMarkers;
-        setMountedMarkers(newMarkers);
+        setMountedMarkersObject({ markers: newMarkers, initialStateWasAltered: true });
         setMarkersDidCange(false);
     }, [markersDidChange, mounterContextState]);
 };
@@ -127,7 +127,10 @@ var MarkerMounter = function (props) {
     if (props === void 0) { props = DEFAULT_MARKER_ARRAY_PROPS; }
     var currentProps = __assign(__assign({}, DEFAULT_MARKER_ARRAY_PROPS), props);
     var children = currentProps.children, displayOnlyInFov = currentProps.displayOnlyInFov, instanceMarkers = currentProps.instanceMarkers;
-    var mountedMarkersState = useState([]);
+    var mountedMarkersState = useState({
+        markers: [],
+        initialStateWasAltered: false,
+    });
     var markersChangedFlag = useState(false);
     var mapContext = useContext(MapMounterContext)[0];
     var clustererContext = useContext(MarkerClustererContext)[0];
@@ -140,17 +143,21 @@ var MarkerMounter = function (props) {
     });
     var contextState = context[0];
     var map = mapContext.map;
-    useHideOutOfFovMarkers(mountedMarkers, map, props.onMountedMarkersUpdateStart, function () {
+    useHideOutOfFovMarkers(mountedMarkers.markers, map, props.onMountedMarkersUpdateStart, function () {
         if (clustererContext.clusterer && mountedMarkers) {
             clustererContext.clusterer.repaint();
         }
         props.onMountedMarkersUpdateFinish &&
-            props.onMountedMarkersUpdateFinish(mountedMarkers);
+            props.onMountedMarkersUpdateFinish(mountedMarkers.markers);
     }, displayOnlyInFov);
     useUpdateContext(context, markersChangedFlag, clustererContext);
     useUpdateMarkers(contextState.stateObject.objects, markersChangedFlag, mountedMarkersState, mapContext, context, clustererContext, instanceMarkers, props.onMountedMarkersUpdateStart);
     useEffect(function () {
-        props.onMountedMarkersUpdateFinish && props.onMountedMarkersUpdateFinish(mountedMarkers);
+        if (!mountedMarkers.initialStateWasAltered) {
+            return;
+        }
+        props.onMountedMarkersUpdateFinish &&
+            props.onMountedMarkersUpdateFinish(mountedMarkers.markers);
     }, [mountedMarkers]);
     if (!mapContext) {
         throw Error('No map to mount to found. Did you place MarkerMounter in MapMounter?');

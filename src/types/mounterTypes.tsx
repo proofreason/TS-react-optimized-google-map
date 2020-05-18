@@ -1,6 +1,11 @@
 type MarkerEventNames = google.maps.MarkerMouseEventNames;
 
-type MountedMarkersState = [MarkerTypeOverwrite[], React.Dispatch<MarkerTypeOverwrite[]>];
+type MountedMarkersStateObject = {
+    markers: MarkerTypeOverwrite[];
+    initialStateWasAltered: boolean;
+};
+
+type MountedMarkersState = [MountedMarkersStateObject, React.Dispatch<MountedMarkersStateObject>];
 
 type ChangedMarkersStateFlag = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 
@@ -9,4 +14,10 @@ interface MarkerTypeOverwrite extends google.maps.Marker {
     isToBeRemoved: boolean;
 }
 
-export { MarkerEventNames, MountedMarkersState, ChangedMarkersStateFlag, MarkerTypeOverwrite };
+export {
+    MarkerEventNames,
+    MountedMarkersState,
+    ChangedMarkersStateFlag,
+    MarkerTypeOverwrite,
+    MountedMarkersStateObject,
+};

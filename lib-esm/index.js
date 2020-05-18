@@ -22,7 +22,7 @@ export * from './context/MarkerClustererContext';
 export * from './context/ObjectMounterContext';
 export * from './context/WithSelectedContext';
 export { default as WithSelectedContext } from './context/WithSelectedContext';
-export * from './components/googleMapsMounter/MarkerMounter';
-export { default as MarkerMounter } from './components/googleMapsMounter/MarkerMounter';
+export * from './components/googleMapsMounters/MarkerMounter';
+export { default as MarkerMounter } from './components/googleMapsMounters/MarkerMounter';
 export * from './lib/Utils';
 //# sourceMappingURL=index.js.map

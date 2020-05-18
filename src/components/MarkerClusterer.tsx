@@ -5,7 +5,7 @@ import {
 } from '@context/MarkerClustererContext';
 import MarkerClusterer from 'marker-clusterer-plus/src/markerclusterer';
 import * as React from 'react';
-import MarkerMounter from './googleMapsMounter/MarkerMounter';
+import MarkerMounter from './googleMapsMounters/MarkerMounter';
 
 interface OptimizedMarkerClustererState {
     context: MarkerClustererContextType;

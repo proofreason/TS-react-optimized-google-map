@@ -1,5 +1,5 @@
 import GoogleMapsMounter from '@components/GoogleMapsMounter';
-import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
+import MarkerMounter from '@components/googleMapsMounters/MarkerMounter';
 import GoogleScriptMounter from '@components/GoogleScriptMounter';
 import InfoBox from '@components/InfoBox';
 import MapControll from '@components/MapControll';

@@ -2,7 +2,7 @@ import { LatLngPosition, getRandomLocations } from '@develop_lib/markerUtils';
 import { useMarkerCache, updateMarkerCache } from '@lib/Optimization';
 import React, { useEffect } from 'react';
 const { useState } = React;
-import MarkerMounter from '@components/googleMapsMounter/MarkerMounter';
+import MarkerMounter from '@components/googleMapsMounters/MarkerMounter';
 import Marker, { MarkerProps } from '@components/Marker';
 import OptimizedMarkerClusterer from '@components/MarkerClusterer';
 import MapMounterContext from '@context/MapMounterContext';
