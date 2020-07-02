@@ -168,9 +168,11 @@ Every optimized object like **Marker must have ID provided** to ensure it is the
 
 ## Contribution
 
-We are not quite yet ready to for contributions of code from outside and don't have the resources
+We are not quite yet ready for contributions of code from outside and don't have the resources
 to manage contributions.
-We might setup a public git repo, and then every help will be welcome.
+But if you find something you would like to implement or improve feel free to start a PR.
+
+Also feel free to report any issues.
 
 ## Project using this library
 

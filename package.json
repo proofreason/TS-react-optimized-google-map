@@ -1,7 +1,7 @@
 {
-  "name": "react-optimized-google-map",
+  "name": "@proofreason/ts-react-optimized-google-map",
   "version": "0.1.4",
-  "description": "google maps wrapper optimized for react applications",
+  "description": "Typescript google maps wrapper optimized for react applications",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
