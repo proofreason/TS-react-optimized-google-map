@@ -93,6 +93,7 @@
     "google",
     "maps"
   ],
+  "files": ["lib/","lib-esm/", "dist", "index.d.ts"],
   "directories": {
     "lib": "lib"
   }
