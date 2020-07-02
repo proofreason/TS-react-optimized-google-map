@@ -1,9 +1,9 @@
 {
   "name": "react-optimized-google-map",
-  "version": "1.0.0",
+  "version": "0.1.4",
   "description": "google maps wrapper optimized for react applications",
   "main": "index.js",
-  "types": "lib/index.d.ts",
+  "types": "index.d.ts",
   "scripts": {
     "dev": "webpack-dev-server --open --config webpack/webpack.dev.js",
     "prod": "webpack --open --config webpack/webpack.prod.js",
@@ -29,7 +29,7 @@
     }
   },
   "author": "Erik Zatloukal <zatloukal.erik@gmail.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^13.9.0",
     "@types/rewire": "^2.5.28",
@@ -92,5 +92,8 @@
     "react",
     "google",
     "maps"
-  ]
+  ],
+  "directories": {
+    "lib": "lib"
+  }
 }

@@ -22,7 +22,6 @@ const { useState, useContext, useEffect } = React;
 
 interface MarkerMounterProps extends MustExtendProps {
     children?: React.ReactNode;
-    batchSize?: number;
     displayOnlyInFov?: boolean;
     onMountedMarkersUpdateFinish?: (markers: google.maps.Marker[]) => void;
     onMountedMarkersUpdateStart?: (markers: google.maps.Marker[]) => void;
@@ -30,7 +29,6 @@ interface MarkerMounterProps extends MustExtendProps {
 
 const DEFAULT_MARKER_ARRAY_PROPS: MarkerMounterProps = {
     instanceMarkers: null,
-    batchSize: 50,
     displayOnlyInFov: false,
 };
 

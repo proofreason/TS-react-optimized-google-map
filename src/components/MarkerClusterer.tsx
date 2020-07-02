@@ -34,8 +34,8 @@ const INITIAL_STATE: OptimizedMarkerClustererState = {
 const BUILDINGS_VISIBLE_TRESHOLD_ZOOM = 15;
 
 /**
- * If zoomOnClick is enabled, the default clusterer behavior will be used
- * no custom function will be registered for onClick even onClickExtenderWillNotWork
+ * If zoomOnClick is enabled, the default markerclustererplus behavior will be used
+ * no custom function will be registered for onClick even onClickExtender Will not work
  */
 const defaultClustererOptions: ClusteringSettings = {
     maxZoom: BUILDINGS_VISIBLE_TRESHOLD_ZOOM,
@@ -45,6 +45,13 @@ const defaultClustererOptions: ClusteringSettings = {
     gridSize: 50,
 };
 
+/**
+ * By default, this component has custom zoom on click which overides markerclustererplus on click.
+ * Use onClickExtender if you want to do something along this zooming function or use customOnClickFunction
+ * to override this default function.
+ *
+ * zoomOnClick will disable both customOnClickFunction and onClickExtender and will use default markerclustererplus behavior
+ */
 const OptimizedMarkerClusterer = (props: OptimizedClustererProps) => {
     const {
         children,
