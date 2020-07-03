@@ -95,6 +95,8 @@
   ],
   "files": ["lib/","lib-esm/", "dist", "index.d.ts"],
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "lib-esm": "lib-esm",
+    "dist": "dist"
   }
 }
