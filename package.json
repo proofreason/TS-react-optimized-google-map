@@ -89,9 +89,12 @@
     "ts-overlapping-marker-spiderfier": "^1.0.3"
   },
   "keywords": [
+    "typescript",
     "react",
+    "optimized",
     "google",
-    "maps"
+    "maps",
+    "ts"
   ],
   "files": ["lib/","lib-esm/", "dist", "index.d.ts"],
   "directories": {
