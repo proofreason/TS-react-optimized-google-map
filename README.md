@@ -168,15 +168,13 @@ Every optimized object like **Marker must have ID provided** to ensure it is the
 
 ## Contribution
 
-We are not quite yet ready to for contributions of code from outside and don't have the resources
+We are not quite yet ready for contributions of code from outside and don't have the resources
 to manage contributions.
-We might setup a public git repo, and then every help will be welcome.
+But if you find something you would like to implement or improve feel free to start a PR.
 
-## Project using this library
+Also feel free to report any issues.
 
-You can go look at the library performance at some of the project that use this library
+## Where is project used
 
-- ##### EON distribuse - odstávky (outages) - https://www.eon-distribuce.cz/odstavky-elektrina 
-    - about 3000 active stationary markers in one viewport
-    - about 20 000 active stationary markers overall on map when viewing building detail (max zoom)
-    - 2 unmounting stages (overall swap of markers)
+This library is used in few comercial projects, but we cannot lost them here.
+Maybe we will add some examples in the future.
