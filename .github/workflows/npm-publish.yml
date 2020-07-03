@@ -35,16 +35,18 @@ jobs:
       - run: npm ci
       - run: npm run build-all
       - name: Set version to the release number
-        run: npm version ${{ github.event.release.tag_name }}
-      - name: Publish to npm registry
-        run: npm publish --access public
-      - name: Commit new version to package json
-        uses: EndBug/add-and-commit@v4
-        with:
-          author_name: $GITHUB_ACTOR
-          author_email: auto@commit.com
-          message: "chore(npm): Automatic commit after publishing a new version"
-          add: "package.json"
+        run: npm version ${{ github.event.release.tag_name }} --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{secrets.temp_npm_token}}
+      - name: Publish to npm registry
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.temp_npm_token}}
+      - name: Commit changed version to git
+        uses: EndBug/add-and-commit@v4
+        with:
+          message: "chore(npm-public): Automatic update version to match release version of ${{ github.event.release.tag_name }}"
+          add: "package.json package-lock.json"
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
