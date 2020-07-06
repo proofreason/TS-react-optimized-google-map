@@ -37,13 +37,13 @@ jobs:
       - run: npm ci
       - run: npm run build-all
       - name: Set version to the release number
-        run: npm version --from-git --no-git-tag-version
+        run: npm version ${{ github.event.release.tag_name }} --no-git-tag-version
         env:
-          NODE_AUTH_TOKEN: ${{secrets.temp_npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
       - name: Publish to npm registry
         run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.temp_npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
       - name: Commit changed version to git
         uses: EndBug/add-and-commit@v4
         with:

@@ -1,6 +1,5 @@
 {
   "name": "@proofreason/ts-react-optimized-google-map",
-  "version": "0.1.4",
   "description": "Typescript google maps wrapper optimized for react applications",
   "main": "index.js",
   "types": "index.d.ts",
@@ -16,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@git.proofreason.com:e.on/eon-drupal.git"
+    "url": "git@github.com:proofreason/TS-react-optimized-google-map.git"
   },
   "lint-staged": {
     "{src,develop}/**/*.{ts,tsx}": [
@@ -96,7 +95,12 @@
     "maps",
     "ts"
   ],
-  "files": ["lib/","lib-esm/", "dist", "index.d.ts"],
+  "files": [
+    "lib/",
+    "lib-esm/",
+    "dist",
+    "index.d.ts"
+  ],
   "directories": {
     "lib": "lib",
     "lib-esm": "lib-esm",
