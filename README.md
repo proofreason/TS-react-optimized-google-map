@@ -29,6 +29,8 @@ I highly encourage you to look into a basic JS google maps api before using any 
 
 From **`develop/examples/SimpleExample`**
 ```jsx
+    import { GoogleScriptMounter, GoogleMapsMounter, Marker } from '@proofreason/ts-react-optimized-google-map';
+
     const [isScriptLoaded, setScriptLoaded] = useState(false);
     const setScriptIsLoaded = () => setScriptLoaded(true);
 
