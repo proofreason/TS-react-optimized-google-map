@@ -28,11 +28,11 @@ const useGoogleScript = ({ scriptUrl, onScriptLoad }: GoogleMapScriptProps) => {
         !alreadyMounted &&
             loadScript(scriptUrl, SCRIPT_ID)
                 .then(() => {
+                    alreadyMounted = true;
                     setScriptLoaded(true);
                     onScriptLoad && onScriptLoad();
                 })
                 .catch((error) => console.error(`error during script load: ${error}`));
-        alreadyMounted = true;
     }, []);
     return scriptLoaded;
 };
